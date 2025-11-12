@@ -1,0 +1,123 @@
+name: Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        type: choice
+        options:
+          - staging
+          - production
+      version:
+        description: 'Docker image version to deploy (tag or sha)'
+        required: false
+        default: 'latest'
+
+jobs:
+  deploy:
+    name: Deploy to ${{ github.event.inputs.environment }}
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set deployment variables
+        id: vars
+        run: |
+          echo "image_tag=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+          echo "deploy_time=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> $GITHUB_OUTPUT
+
+      # Option 1: Deploy via SSH to VPS/Droplet
+      - name: Deploy to VPS via SSH
+        if: ${{ vars.DEPLOY_METHOD == 'ssh' }}
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT || 22 }}
+          script: |
+            cd ${{ secrets.DEPLOY_PATH }}
+
+            # Pull latest code
+            git pull origin main
+
+            # Pull Docker images
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/educationelly-server:${{ steps.vars.outputs.image_tag }}
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/educationelly-client:${{ steps.vars.outputs.image_tag }}
+
+            # Deploy with docker-compose
+            docker-compose -f docker-compose.prod.yml down
+            docker-compose -f docker-compose.prod.yml up -d
+
+            # Clean up old images
+            docker image prune -af
+
+            echo "✅ Deployment completed at ${{ steps.vars.outputs.deploy_time }}"
+
+      # Option 2: Deploy to Kubernetes
+      - name: Deploy to Kubernetes
+        if: ${{ vars.DEPLOY_METHOD == 'kubernetes' }}
+        run: |
+          echo "Kubernetes deployment coming soon..."
+          echo "This will use kubectl to update deployments"
+          echo "Image tag: ${{ steps.vars.outputs.image_tag }}"
+
+      # Option 3: Deploy to DigitalOcean App Platform
+      - name: Deploy to DigitalOcean App Platform
+        if: ${{ vars.DEPLOY_METHOD == 'app-platform' }}
+        uses: digitalocean/app_action@v1.1.5
+        with:
+          app_name: ${{ secrets.DO_APP_NAME }}
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+      - name: Deployment notification
+        if: success()
+        run: |
+          echo "🚀 Successfully deployed to ${{ github.event.inputs.environment }}"
+          echo "📦 Version: ${{ steps.vars.outputs.image_tag }}"
+          echo "⏰ Time: ${{ steps.vars.outputs.deploy_time }}"
+
+      - name: Rollback on failure
+        if: failure()
+        run: |
+          echo "❌ Deployment failed! Manual rollback may be required."
+          echo "Check the logs above for details."
+
+  # Health check after deployment
+  health-check:
+    name: Health Check
+    runs-on: ubuntu-latest
+    needs: deploy
+    if: success()
+
+    steps:
+      - name: Wait for deployment to settle
+        run: sleep 30
+
+      - name: Check application health
+        run: |
+          # Health check endpoint
+          HEALTH_URL="${{ secrets.APP_URL }}/health"
+
+          echo "Checking health at: $HEALTH_URL"
+
+          response=$(curl -s -o /dev/null -w "%{http_code}" $HEALTH_URL || echo "000")
+
+          if [ "$response" = "200" ]; then
+            echo "✅ Health check passed!"
+            exit 0
+          else
+            echo "❌ Health check failed with status: $response"
+            exit 1
+          fi
+
+      - name: Notify on health check failure
+        if: failure()
+        run: |
+          echo "⚠️ Application deployed but health check failed!"
+          echo "Immediate attention required - check application logs"

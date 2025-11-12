@@ -3,6 +3,8 @@
 > A full-stack application designed to help mainstream classroom teachers engage with English Language Learning (ELL) students.
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![CI](https://github.com/maxjeffwell/educationELLy-Docker/actions/workflows/ci.yml/badge.svg)](https://github.com/maxjeffwell/educationELLy-Docker/actions/workflows/ci.yml)
+[![Docker Build](https://github.com/maxjeffwell/educationELLy-Docker/actions/workflows/docker-build.yml/badge.svg)](https://github.com/maxjeffwell/educationELLy-Docker/actions/workflows/docker-build.yml)
 [![Docker](https://img.shields.io/badge/docker-ready-brightgreen)](https://www.docker.com/)
 [![Kubernetes](https://img.shields.io/badge/kubernetes-ready-326CE5)]()
 
@@ -300,6 +302,7 @@ This project is licensed under the GNU General Public License v3.0 - see the [LI
 ## Documentation
 
 - [Docker Setup](./DOCKER.md) - Complete Docker and production deployment guide
+- [CI/CD Pipeline](./CICD.md) - GitHub Actions workflows and deployment automation
 - [Client Documentation](./full-stack-capstone-client/README.md) - Frontend documentation
 - [Server Documentation](./full-stack-capstone-server/README.md) - Backend documentation
 - [Nginx Configuration](./nginx/README.md) - Reverse proxy setup
@@ -310,10 +313,11 @@ This project is licensed under the GNU General Public License v3.0 - see the [LI
 - [x] Docker containerization
 - [x] Production-ready docker-compose setup
 - [x] Nginx reverse proxy
+- [x] CI/CD pipeline (GitHub Actions)
+- [x] Automated Docker builds and security scanning
 - [ ] Kubernetes deployment manifests
-- [ ] CI/CD pipeline (GitHub Actions)
 - [ ] Horizontal pod autoscaling
-- [ ] Automated SSL certificate management
+- [ ] Automated SSL certificate management (cert-manager)
 - [ ] Monitoring and logging (Prometheus/Grafana)
 - [ ] End-to-end tests
 - [ ] Performance optimization
