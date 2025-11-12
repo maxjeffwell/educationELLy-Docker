@@ -1,0 +1,14 @@
+{
+  "require": [
+    "dotenv/config",
+    "@babel/register"
+  ],
+  "spec": "test/**/*.mjs",
+  "exit": true,
+  "experimental-modules": true,
+  "node-option": [
+    "experimental-specifier-resolution=node",
+    "loader=esm"
+  ],
+  "timeout": 5000
+}

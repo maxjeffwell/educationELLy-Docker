@@ -1,0 +1,56 @@
+# Dependencies
+node_modules
+npm-debug.log
+yarn-error.log
+yarn.lock
+
+# Production build
+build
+dist
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# Testing
+coverage
+.nyc_output
+src/**/*.test.js
+src/**/*.test.jsx
+src/**/*.spec.js
+src/**/*.spec.jsx
+
+# Documentation
+README.md
+CLAUDE.md
+*.md
+
+# Logs
+logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Misc
+.cache
+public/hot
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose*.yml
