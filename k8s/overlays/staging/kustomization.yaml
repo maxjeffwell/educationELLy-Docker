@@ -1,0 +1,41 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: educationelly-staging
+
+bases:
+  - ../../base
+
+namePrefix: staging-
+
+commonLabels:
+  environment: staging
+
+patches:
+  - target:
+      kind: Deployment
+      name: educationelly-server
+    patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 1
+  - target:
+      kind: Deployment
+      name: educationelly-client
+    patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 1
+
+configMapGenerator:
+  - name: educationelly-config
+    behavior: merge
+    literals:
+      - ALLOWED_ORIGINS=https://staging.yourdomain.com
+      - REACT_APP_API_URL=https://staging.yourdomain.com/api
+
+images:
+  - name: maxjeffwell/educationelly-server
+    newTag: staging
+  - name: maxjeffwell/educationelly-client
+    newTag: staging

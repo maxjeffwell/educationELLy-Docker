@@ -1,0 +1,146 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: educationelly-ingress
+  namespace: educationelly
+  labels:
+    app: educationelly
+  annotations:
+    # Nginx ingress annotations
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+
+    # Rate limiting
+    nginx.ingress.kubernetes.io/limit-rps: "100"
+    nginx.ingress.kubernetes.io/limit-connections: "10"
+
+    # CORS
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "https://yourdomain.com"
+
+    # Cert-manager for automatic SSL
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+
+    # Security headers
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      more_set_headers "X-Frame-Options: SAMEORIGIN";
+      more_set_headers "X-Content-Type-Options: nosniff";
+      more_set_headers "X-XSS-Protection: 1; mode=block";
+      more_set_headers "Strict-Transport-Security: max-age=31536000; includeSubDomains";
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - yourdomain.com
+    - www.yourdomain.com
+    secretName: educationelly-tls
+  rules:
+  - host: yourdomain.com
+    http:
+      paths:
+      # API routes to backend server
+      - path: /api
+        pathType: Prefix
+        backend:
+          service:
+            name: educationelly-server
+            port:
+              number: 8080
+      - path: /signin
+        pathType: Prefix
+        backend:
+          service:
+            name: educationelly-server
+            port:
+              number: 8080
+      - path: /signup
+        pathType: Prefix
+        backend:
+          service:
+            name: educationelly-server
+            port:
+              number: 8080
+      - path: /signout
+        pathType: Prefix
+        backend:
+          service:
+            name: educationelly-server
+            port:
+              number: 8080
+      - path: /students
+        pathType: Prefix
+        backend:
+          service:
+            name: educationelly-server
+            port:
+              number: 8080
+      - path: /whoami
+        pathType: Prefix
+        backend:
+          service:
+            name: educationelly-server
+            port:
+              number: 8080
+      # All other routes to frontend client
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: educationelly-client
+            port:
+              number: 3000
+  - host: www.yourdomain.com
+    http:
+      paths:
+      # API routes to backend server
+      - path: /api
+        pathType: Prefix
+        backend:
+          service:
+            name: educationelly-server
+            port:
+              number: 8080
+      - path: /signin
+        pathType: Prefix
+        backend:
+          service:
+            name: educationelly-server
+            port:
+              number: 8080
+      - path: /signup
+        pathType: Prefix
+        backend:
+          service:
+            name: educationelly-server
+            port:
+              number: 8080
+      - path: /signout
+        pathType: Prefix
+        backend:
+          service:
+            name: educationelly-server
+            port:
+              number: 8080
+      - path: /students
+        pathType: Prefix
+        backend:
+          service:
+            name: educationelly-server
+            port:
+              number: 8080
+      - path: /whoami
+        pathType: Prefix
+        backend:
+          service:
+            name: educationelly-server
+            port:
+              number: 8080
+      # All other routes to frontend client
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: educationelly-client
+            port:
+              number: 3000
