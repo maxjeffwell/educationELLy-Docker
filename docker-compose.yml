@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  # Express.js Server (API Backend)
+  server:
+    build:
+      context: ./full-stack-capstone-server
+      dockerfile: Dockerfile
+      target: development
+    container_name: educationelly-server
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      PORT: 8080
+      MONGODB_URI: ${MONGODB_URI}
+      JWT_SECRET: ${JWT_SECRET}
+      ALLOWED_ORIGINS: http://localhost:3000,http://client:3000
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./full-stack-capstone-server:/app
+      - /app/node_modules
+    networks:
+      - educationelly-network
+    command: npm run dev
+
+  # React Client (Frontend)
+  client:
+    build:
+      context: ./full-stack-capstone-client
+      dockerfile: Dockerfile
+      target: development
+    container_name: educationelly-client
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      REACT_APP_API_URL: http://localhost:8080
+      WATCHPACK_POLLING: "true"
+      CHOKIDAR_USEPOLLING: "true"
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./full-stack-capstone-client:/app
+      - /app/node_modules
+      - /app/build
+    depends_on:
+      - server
+    networks:
+      - educationelly-network
+    stdin_open: true
+    tty: true
+
+networks:
+  educationelly-network:
+    driver: bridge
