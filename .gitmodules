@@ -1,0 +1,8 @@
+[submodule "full-stack-capstone-client"]
+	path = full-stack-capstone-client
+	url = https://github.com/maxjeffwell/full-stack-capstone-client.git
+	branch = main
+[submodule "full-stack-capstone-server"]
+	path = full-stack-capstone-server
+	url = https://github.com/maxjeffwell/full-stack-capstone-server.git
+	branch = master
