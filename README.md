@@ -87,8 +87,8 @@ educationELLy/
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/yourusername/educationELLy.git
-   cd educationELLy
+   git clone https://github.com/maxjeffwell/educationELLy-Docker.git
+   cd educationELLy-Docker
    ```
 
 2. **Configure environment variables:**
