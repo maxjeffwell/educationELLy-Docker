@@ -85,10 +85,11 @@ jobs:
         continue-on-error: true
 
       - name: Run tests
-        run: npm run test:ci --if-present || echo "Tests skipped"
+        run: npm run test:ci --if-present || echo "Tests failed or skipped - continuing anyway"
         continue-on-error: true
         env:
           CI: true
+          NODE_ENV: test
 
       - name: Build application
         run: npm run build
