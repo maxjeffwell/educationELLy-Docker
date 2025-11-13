@@ -111,10 +111,6 @@ measureWebVitals(metric => {
   // In production, you might want to send these to an analytics service
 });
 
-// Debug environment
-console.log('🔧 NODE_ENV:', process.env.NODE_ENV);
-console.log('🔧 Development mode:', process.env.NODE_ENV === 'development');
-
 // Force service worker cleanup (regardless of environment for debugging)
 if ('serviceWorker' in navigator) {
   // Check if we need to reload after cleanup
@@ -122,20 +118,13 @@ if ('serviceWorker' in navigator) {
 
   navigator.serviceWorker.getRegistrations().then(function (registrations) {
     if (registrations.length > 0) {
-      console.log(
-        '🧹 Found',
-        registrations.length,
-        'service workers to unregister'
-      );
       Promise.all(
         registrations.map(registration => {
-          console.log('🧹 Unregistering SW:', registration.scope);
           return registration.unregister();
         })
       ).then(() => {
         if (needsReload) {
           localStorage.setItem('sw-cleanup-done', 'true');
-          console.log('🧹 Service workers unregistered, reloading page...');
           window.location.reload();
         }
       });
@@ -147,12 +136,9 @@ if ('serviceWorker' in navigator) {
     if (names.length > 0) {
       Promise.all(
         names.map(name => {
-          console.log('🧹 Deleting cache:', name);
           return caches.delete(name);
         })
-      ).then(() => {
-        console.log('🧹 All caches cleared');
-      });
+      );
     }
   });
 

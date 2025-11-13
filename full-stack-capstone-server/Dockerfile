@@ -8,7 +8,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies
-RUN npm ci --omit=dev && \
+RUN npm ci --production && \
     npm cache clean --force
 
 # Development stage
@@ -39,7 +39,7 @@ WORKDIR /app
 
 # Copy package files and install production dependencies
 COPY package*.json ./
-RUN npm ci --omit=dev && \
+RUN npm ci --production && \
     npm cache clean --force
 
 # Copy application code

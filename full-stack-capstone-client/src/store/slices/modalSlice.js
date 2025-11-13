@@ -5,17 +5,11 @@ const modalSlice = createSlice({
   initialState: null,
   reducers: {
     showModal: (state, action) => {
-      console.log('🔧 showModal reducer called with payload:', action.payload);
-      console.log('🔧 action.payload.modalType:', action.payload.modalType);
-      console.log('🔧 action.payload.modalProps:', action.payload.modalProps);
-
       try {
         const newState = {
           modalType: action.payload.modalType,
           modalProps: action.payload.modalProps || {},
         };
-        console.log('🔧 showModal created newState:', newState);
-        console.log('🔧 About to return newState');
         return newState;
       } catch (error) {
         console.error('🔧 Error in showModal reducer:', error);
@@ -23,7 +17,6 @@ const modalSlice = createSlice({
       }
     },
     hideModal: (state, action) => {
-      console.log('🔧 hideModal reducer called');
       return null;
     },
   },
