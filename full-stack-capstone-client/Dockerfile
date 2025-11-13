@@ -43,9 +43,8 @@ FROM node:20-alpine AS production
 
 WORKDIR /app
 
-# Copy package files and install production dependencies only
-COPY package*.json ./
-RUN npm ci --production && \
+# Install only express for serving static files
+RUN npm install --omit=dev express && \
     npm cache clean --force
 
 # Copy built application from build stage
