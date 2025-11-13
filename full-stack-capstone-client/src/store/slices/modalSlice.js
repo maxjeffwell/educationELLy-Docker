@@ -16,7 +16,7 @@ const modalSlice = createSlice({
         return state;
       }
     },
-    hideModal: (state, action) => {
+    hideModal: () => {
       return null;
     },
   },
