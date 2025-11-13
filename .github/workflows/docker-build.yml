@@ -18,6 +18,10 @@ env:
   SERVER_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/educationelly-server
   CLIENT_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/educationelly-client
 
+permissions:
+  contents: read
+  security-events: write
+
 jobs:
   build-and-push:
     name: Build and Push Docker Images
