@@ -48,11 +48,9 @@ const ModalManager = () => {
   }, [modal?.modalProps?.closeOnEscape, handleKeyDown]);
 
   if (!modal) {
-    console.log('ModalManager - no modal, returning null');
     return null;
   }
 
-  console.log('ModalManager - about to render modal');
   const { modalProps } = modal;
 
   const handleBackdropClick = e => {
@@ -60,13 +58,6 @@ const ModalManager = () => {
       dispatch(hideModal());
     }
   };
-
-  console.log(
-    'ModalManager - rendering JSX with backdrop style:',
-    backdropStyle
-  );
-  console.log('ModalManager - rendering JSX with modal style:', modalStyle);
-  console.log('ModalManager - modalProps.children:', modalProps.children);
 
   return (
     <div

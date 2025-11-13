@@ -49,13 +49,13 @@ const StyledFancyButton = styled.button`
   }
 `;
 
-const FancyButton = React.forwardRef(({ icon, ...props }, ref) => (
+const FancyButton = React.forwardRef(({ icon: _icon, ...props }, ref) => (
   <StyledFancyButton {...props} ref={ref} />
 ));
 
 FancyButton.displayName = 'FancyButton';
 
-const ConfirmButton = React.forwardRef(({ icon, ...props }, ref) => (
+const ConfirmButton = React.forwardRef(({ icon: _icon, ...props }, ref) => (
   <StyledConfirmButton {...props} ref={ref} />
 ));
 
@@ -68,8 +68,6 @@ const DeleteStudent = ({ id }) => {
   const confirmButtonRef = useRef(null);
 
   const confirmDelete = () => {
-    console.log('Delete button clicked, showing modal');
-    console.log('About to dispatch showModal action');
     dispatch(
       showModal({
         modalType: 'DELETE_STUDENT_MODAL',
@@ -264,7 +262,6 @@ const DeleteStudent = ({ id }) => {
 
   const handleDeleteClick = e => {
     e.preventDefault();
-    console.log('Delete button clicked');
     confirmDelete();
   };
 
