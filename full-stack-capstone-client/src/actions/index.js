@@ -15,7 +15,11 @@ import authService from '../utils/auth';
 
 export const signup = (formProps, callback) => async dispatch => {
   try {
-    const response = await axios.post(`${API_BASE_URL}/signup`, formProps);
+    // Handle both calling patterns: (formData, callback) or ({formData, callback})
+    const data = formProps.formData || formProps;
+    const cb = callback || formProps.callback;
+
+    const response = await axios.post(`${API_BASE_URL}/signup`, data);
     dispatch({ type: AUTH_USER, payload: response.data.token });
 
     // Use secure auth service instead of localStorage
@@ -23,7 +27,7 @@ export const signup = (formProps, callback) => async dispatch => {
     if (response.data.refreshToken) {
       authService.setTokens(response.data.token, response.data.refreshToken);
     }
-    callback();
+    if (cb) cb();
   } catch (e) {
     dispatch({
       type: REGISTER_USER_ERROR,
@@ -34,7 +38,11 @@ export const signup = (formProps, callback) => async dispatch => {
 
 export const signin = (formProps, callback) => async dispatch => {
   try {
-    const response = await axios.post(`${API_BASE_URL}/signin`, formProps);
+    // Handle both calling patterns: (formData, callback) or ({formData, callback})
+    const data = formProps.formData || formProps;
+    const cb = callback || formProps.callback;
+
+    const response = await axios.post(`${API_BASE_URL}/signin`, data);
     dispatch({ type: AUTH_USER, payload: response.data.token });
 
     // Use secure auth service instead of localStorage
@@ -42,7 +50,7 @@ export const signin = (formProps, callback) => async dispatch => {
     if (response.data.refreshToken) {
       authService.setTokens(response.data.token, response.data.refreshToken);
     }
-    callback();
+    if (cb) cb();
   } catch (e) {
     dispatch({
       type: AUTH_ERROR,
