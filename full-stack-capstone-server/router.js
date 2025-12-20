@@ -2,6 +2,12 @@ import passport from 'passport';
 import { validationResult } from 'express-validator';
 import { Signin, Signup, validateSignup } from './controllers/authentication.js';
 import { studentValidationRules, mongoIdValidation } from './middleware/validation.js';
+import {
+  generateStudyRecommendations,
+  generateFlashcard,
+  generateQuiz,
+  checkAIHealth
+} from './routes/ai-routes.js';
 
 // Create an object and insert it between our incoming request and our route handler (i.e. Passport middleware - requireAuth)
 
@@ -142,6 +148,12 @@ const Router = (app) => { // Inside this function we have access to our Express 
       })
       .catch((err) => handleServerError(res, err, 'Failed to delete student'));
   });
+
+  // AI-powered features
+  app.post('/ai/study-recommendations', requireAuth, generateStudyRecommendations);
+  app.post('/ai/flashcard', requireAuth, generateFlashcard);
+  app.post('/ai/quiz', requireAuth, generateQuiz);
+  app.get('/ai/health', checkAIHealth);
 };
 
 export default Router;
