@@ -1,0 +1,62 @@
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: strip-api-prefix
+  namespace: educationelly
+spec:
+  stripPrefix:
+    prefixes:
+      - /api
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: educationelly-ingress
+  namespace: educationelly
+  labels:
+    app: educationelly
+  annotations:
+    # Cert-manager for automatic SSL
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    # Traefik annotations
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+spec:
+  ingressClassName: traefik
+  tls:
+  - hosts:
+    - educationelly-k8s.el-jefe.me
+    secretName: educationelly-tls
+  rules:
+  - host: educationelly-k8s.el-jefe.me
+    http:
+      paths:
+      # All other routes to frontend client
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: educationelly-client
+            port:
+              number: 3000
+---
+# Separate IngressRoute for API with strip prefix middleware
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: educationelly-api
+  namespace: educationelly
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`educationelly-k8s.el-jefe.me`) && PathPrefix(`/api`)
+      kind: Rule
+      middlewares:
+        - name: strip-api-prefix
+      services:
+        - name: educationelly-server
+          port: 8080
+  tls:
+    secretName: educationelly-tls

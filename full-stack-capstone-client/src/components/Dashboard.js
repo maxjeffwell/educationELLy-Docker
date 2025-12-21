@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { Routes, Route } from 'react-router-dom';
 import Navigation from './Navigation';
 import authRequired from './authRequired';
-import Landing from './Landing';
+import DashboardHome from './DashboardHome';
 import Students from './auth/Students';
 import SideBar from './Sidebar';
 import SEO from './SEO';
@@ -40,7 +40,7 @@ const Dashboard = () => {
       >
         <Navigation />
         <Routes>
-          <Route path="/" element={<Landing />} />
+          <Route path="/" element={<DashboardHome />} />
           <Route path="/students" element={<Students />} />
         </Routes>
         <SideBar />

@@ -1,0 +1,468 @@
+apiVersion: v1
+data:
+  ALLOWED_ORIGINS: https://educationelly-k8s.el-jefe.me
+  CLIENT_PORT: "3000"
+  NODE_ENV: production
+  REACT_APP_API_URL: https://educationelly-k8s.el-jefe.me/api
+  SERVER_PORT: "8080"
+kind: ConfigMap
+metadata:
+  labels:
+    app: educationelly
+    environment: production
+  name: educationelly-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: educationelly
+    component: client
+    environment: production
+  name: educationelly-client
+spec:
+  ports:
+  - name: http
+    port: 3000
+    protocol: TCP
+    targetPort: 3000
+  selector:
+    app: educationelly
+    component: client
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: educationelly
+    component: server
+    environment: production
+  name: educationelly-server
+spec:
+  ports:
+  - name: http
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: educationelly
+    component: server
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: educationelly
+    component: client
+    environment: production
+  name: educationelly-client
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: educationelly
+      component: client
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: educationelly
+        component: client
+    spec:
+      containers:
+      - env:
+        - name: NODE_ENV
+          valueFrom:
+            configMapKeyRef:
+              key: NODE_ENV
+              name: educationelly-config
+        - name: REACT_APP_API_URL
+          valueFrom:
+            configMapKeyRef:
+              key: REACT_APP_API_URL
+              name: educationelly-config
+        image: maxjeffwell/educationelly-client:latest
+        imagePullPolicy: Always
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /health
+            port: 3000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+        name: client
+        ports:
+        - containerPort: 3000
+          name: http
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /health
+            port: 3000
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 3
+        resources:
+          limits:
+            cpu: 500m
+            memory: 512Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          readOnlyRootFilesystem: false
+          runAsNonRoot: true
+          runAsUser: 1001
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: educationelly
+    component: server
+    environment: production
+  name: educationelly-server
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: educationelly
+      component: server
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: educationelly
+        component: server
+    spec:
+      containers:
+      - env:
+        - name: NODE_ENV
+          valueFrom:
+            configMapKeyRef:
+              key: NODE_ENV
+              name: educationelly-config
+        - name: PORT
+          valueFrom:
+            configMapKeyRef:
+              key: SERVER_PORT
+              name: educationelly-config
+        - name: ALLOWED_ORIGINS
+          valueFrom:
+            configMapKeyRef:
+              key: ALLOWED_ORIGINS
+              name: educationelly-config
+        - name: MONGODB_URI
+          valueFrom:
+            secretKeyRef:
+              key: mongodb-uri
+              name: educationelly-secrets
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: jwt-secret
+              name: educationelly-secrets
+        image: maxjeffwell/educationelly-server:latest
+        imagePullPolicy: Always
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+        name: server
+        ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 3
+        resources:
+          limits:
+            cpu: 500m
+            memory: 512Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          readOnlyRootFilesystem: false
+          runAsNonRoot: true
+          runAsUser: 1001
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  labels:
+    app: educationelly
+    component: client
+    environment: production
+  name: educationelly-client-hpa
+spec:
+  behavior:
+    scaleDown:
+      policies:
+      - periodSeconds: 60
+        type: Percent
+        value: 50
+      stabilizationWindowSeconds: 300
+    scaleUp:
+      policies:
+      - periodSeconds: 30
+        type: Percent
+        value: 100
+      - periodSeconds: 30
+        type: Pods
+        value: 2
+      selectPolicy: Max
+      stabilizationWindowSeconds: 0
+  maxReplicas: 10
+  metrics:
+  - resource:
+      name: cpu
+      target:
+        averageUtilization: 70
+        type: Utilization
+    type: Resource
+  - resource:
+      name: memory
+      target:
+        averageUtilization: 80
+        type: Utilization
+    type: Resource
+  minReplicas: 2
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: educationelly-client
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  labels:
+    app: educationelly
+    component: server
+    environment: production
+  name: educationelly-server-hpa
+spec:
+  behavior:
+    scaleDown:
+      policies:
+      - periodSeconds: 60
+        type: Percent
+        value: 50
+      stabilizationWindowSeconds: 300
+    scaleUp:
+      policies:
+      - periodSeconds: 30
+        type: Percent
+        value: 100
+      - periodSeconds: 30
+        type: Pods
+        value: 2
+      selectPolicy: Max
+      stabilizationWindowSeconds: 0
+  maxReplicas: 10
+  metrics:
+  - resource:
+      name: cpu
+      target:
+        averageUtilization: 70
+        type: Utilization
+    type: Resource
+  - resource:
+      name: memory
+      target:
+        averageUtilization: 80
+        type: Utilization
+    type: Resource
+  minReplicas: 2
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: educationelly-server
+---
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  labels:
+    app: educationelly
+    environment: production
+  name: letsencrypt-prod
+spec:
+  acme:
+    email: admin@el-jefe.me
+    privateKeySecretRef:
+      name: letsencrypt-prod
+    server: https://acme-v02.api.letsencrypt.org/directory
+    solvers:
+    - http01:
+        ingress:
+          class: nginx
+---
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  labels:
+    app: educationelly
+    environment: production
+  name: letsencrypt-staging
+spec:
+  acme:
+    email: admin@el-jefe.me
+    privateKeySecretRef:
+      name: letsencrypt-staging
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    solvers:
+    - http01:
+        ingress:
+          class: nginx
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: educationelly-ingress-client
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/limit-rps: "100"
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "https://educationelly-k8s.el-jefe.me"
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - educationelly-k8s.el-jefe.me
+    secretName: educationelly-tls
+  rules:
+  - host: educationelly-k8s.el-jefe.me
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: educationelly-client
+            port:
+              number: 3000
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: educationelly-ingress-api
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "https://educationelly-k8s.el-jefe.me"
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - educationelly-k8s.el-jefe.me
+    secretName: educationelly-tls
+  rules:
+  - host: educationelly-k8s.el-jefe.me
+    http:
+      paths:
+      - path: /api(/|$)(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: educationelly-server
+            port:
+              number: 8080
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: educationelly-ingress-legacy
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    # NO rewrite-target here. We pass /signin as /signin
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    # Additional timeout for slow internal processing/AI
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "120"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "https://educationelly-k8s.el-jefe.me"
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - educationelly-k8s.el-jefe.me
+    secretName: educationelly-tls
+  rules:
+  - host: educationelly-k8s.el-jefe.me
+    http:
+      paths:
+      - path: /signin
+        pathType: Prefix
+        backend:
+          service:
+            name: educationelly-server
+            port:
+              number: 8080
+      - path: /signup
+        pathType: Prefix
+        backend:
+          service:
+            name: educationelly-server
+            port:
+              number: 8080
+      - path: /students
+        pathType: Prefix
+        backend:
+          service:
+            name: educationelly-server
+            port:
+              number: 8080
+      - path: /whoami
+        pathType: Prefix
+        backend:
+          service:
+            name: educationelly-server
+            port:
+              number: 8080
+      - path: /signout
+        pathType: Prefix
+        backend:
+          service:
+            name: educationelly-server
+            port:
+              number: 8080
+      - path: /ai
+        pathType: Prefix
+        backend:
+          service:
+            name: educationelly-server
+            port:
+              number: 8080

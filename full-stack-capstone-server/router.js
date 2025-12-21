@@ -39,6 +39,11 @@ const requireAuth = passport.authenticate('jwt', { session: false }); // When a 
 const requireSignin = passport.authenticate('local', { session: false });
 
 const Router = (app) => { // Inside this function we have access to our Express app
+  // Health check endpoint for Kubernetes probes
+  app.get('/health', (req, res) => {
+    res.status(200).json({ status: 'healthy', timestamp: new Date().toISOString() });
+  });
+
   app.get('/', requireAuth, (req, res) => {
     res.send('GET request to homepage');
   });
@@ -154,6 +159,9 @@ const Router = (app) => { // Inside this function we have access to our Express 
   app.post('/ai/flashcard', requireAuth, generateFlashcard);
   app.post('/ai/quiz', requireAuth, generateQuiz);
   app.get('/ai/health', checkAIHealth);
+
+  // Log AI routes registration
+  console.log('AI routes registered successfully');
 };
 
 export default Router;

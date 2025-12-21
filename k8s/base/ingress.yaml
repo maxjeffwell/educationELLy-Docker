@@ -7,7 +7,7 @@ metadata:
     app: educationelly
   annotations:
     # Nginx ingress annotations
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
 
@@ -18,6 +18,9 @@ metadata:
     # CORS
     nginx.ingress.kubernetes.io/enable-cors: "true"
     nginx.ingress.kubernetes.io/cors-allow-origin: "https://yourdomain.com"
+    
+    # Use regex path matching
+    nginx.ingress.kubernetes.io/use-regex: "true"
 
     # Cert-manager for automatic SSL
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
@@ -39,52 +42,17 @@ spec:
   - host: yourdomain.com
     http:
       paths:
-      # API routes to backend server
-      - path: /api
-        pathType: Prefix
-        backend:
-          service:
-            name: educationelly-server
-            port:
-              number: 8080
-      - path: /signin
-        pathType: Prefix
-        backend:
-          service:
-            name: educationelly-server
-            port:
-              number: 8080
-      - path: /signup
-        pathType: Prefix
-        backend:
-          service:
-            name: educationelly-server
-            port:
-              number: 8080
-      - path: /signout
-        pathType: Prefix
-        backend:
-          service:
-            name: educationelly-server
-            port:
-              number: 8080
-      - path: /students
-        pathType: Prefix
-        backend:
-          service:
-            name: educationelly-server
-            port:
-              number: 8080
-      - path: /whoami
-        pathType: Prefix
+      # API routes to backend server - captured group 2 is passed to backend
+      - path: /api(/|$)(.*)
+        pathType: ImplementationSpecific
         backend:
           service:
             name: educationelly-server
             port:
               number: 8080
       # All other routes to frontend client
-      - path: /
-        pathType: Prefix
+      - path: /()(.*)
+        pathType: ImplementationSpecific
         backend:
           service:
             name: educationelly-client
@@ -94,51 +62,16 @@ spec:
     http:
       paths:
       # API routes to backend server
-      - path: /api
-        pathType: Prefix
-        backend:
-          service:
-            name: educationelly-server
-            port:
-              number: 8080
-      - path: /signin
-        pathType: Prefix
-        backend:
-          service:
-            name: educationelly-server
-            port:
-              number: 8080
-      - path: /signup
-        pathType: Prefix
-        backend:
-          service:
-            name: educationelly-server
-            port:
-              number: 8080
-      - path: /signout
-        pathType: Prefix
-        backend:
-          service:
-            name: educationelly-server
-            port:
-              number: 8080
-      - path: /students
-        pathType: Prefix
-        backend:
-          service:
-            name: educationelly-server
-            port:
-              number: 8080
-      - path: /whoami
-        pathType: Prefix
+      - path: /api(/|$)(.*)
+        pathType: ImplementationSpecific
         backend:
           service:
             name: educationelly-server
             port:
               number: 8080
       # All other routes to frontend client
-      - path: /
-        pathType: Prefix
+      - path: /()(.*)
+        pathType: ImplementationSpecific
         backend:
           service:
             name: educationelly-client

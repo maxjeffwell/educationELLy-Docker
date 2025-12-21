@@ -3,11 +3,38 @@ kind: Kustomization
 
 namespace: educationelly
 
-bases:
+resources:
   - ../../base
 
-commonLabels:
-  environment: production
+labels:
+  - pairs:
+      environment: production
+
+patches:
+  - target:
+      kind: Ingress
+      name: educationelly-ingress
+    patch: |-
+      - op: replace
+        path: /spec/rules/0/host
+        value: educationelly-k8s.el-jefe.me
+      - op: replace
+        path: /spec/tls/0/hosts/0
+        value: educationelly-k8s.el-jefe.me
+      - op: remove
+        path: /spec/rules/1
+      - op: remove
+        path: /spec/tls/0/hosts/1
+  - target:
+      kind: ConfigMap
+      name: educationelly-config
+    patch: |-
+      - op: replace
+        path: /data/ALLOWED_ORIGINS
+        value: https://educationelly-k8s.el-jefe.me
+      - op: replace
+        path: /data/REACT_APP_API_URL
+        value: https://educationelly-k8s.el-jefe.me/api
 
 images:
   - name: maxjeffwell/educationelly-server

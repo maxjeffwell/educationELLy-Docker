@@ -37,6 +37,11 @@ spec:
             configMapKeyRef:
               name: educationelly-config
               key: NODE_ENV
+        - name: PORT
+          valueFrom:
+            configMapKeyRef:
+              name: educationelly-config
+              key: CLIENT_PORT
         - name: REACT_APP_API_URL
           valueFrom:
             configMapKeyRef:
