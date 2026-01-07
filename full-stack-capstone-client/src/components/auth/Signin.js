@@ -134,6 +134,13 @@ const Signin = () => {
   const errorMessage = useSelector(state => state.auth.errorMessage);
   const isAuthenticated = useSelector(state => state.auth.authenticated);
 
+  // Debug logging
+  React.useEffect(() => {
+    console.log('[Signin] isAuthenticated:', isAuthenticated);
+    console.log('[Signin] isAuthenticated type:', typeof isAuthenticated);
+    console.log('[Signin] isAuthenticated truthy:', !!isAuthenticated);
+  }, [isAuthenticated]);
+
   const {
     control,
     handleSubmit,

@@ -2,8 +2,19 @@ const express = require('express');
 const path = require('path');
 const app = express();
 
-// Serve static files from the React app build directory
-app.use(express.static(path.join(__dirname, 'build')));
+// Serve static files from the React app build directory with cache control
+app.use(express.static(path.join(__dirname, 'build'), {
+  maxAge: 0, // Don't cache in production during active development
+  etag: false,
+  setHeaders: (res, filePath) => {
+    // Aggressive cache busting for JS and CSS files
+    if (filePath.endsWith('.js') || filePath.endsWith('.css')) {
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+    }
+  }
+}));
 
 // API routes would go here
 // app.use('/api', require('./routes/api'));
