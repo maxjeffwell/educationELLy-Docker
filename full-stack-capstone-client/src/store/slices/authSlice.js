@@ -13,7 +13,7 @@ const initialState = {
 // Async thunks
 export const signin = createAsyncThunk(
   'auth/signin',
-  async ({ formData, callback }, { rejectWithValue }) => {
+  async ({ formData, callback } = {}, { rejectWithValue }) => {
     try {
       const response = await axios.post(`${API_BASE_URL}/signin`, formData);
       const { token, refreshToken } = response.data;
@@ -24,7 +24,7 @@ export const signin = createAsyncThunk(
         authService.setTokens(token, refreshToken);
       }
 
-      // Execute callback if provided
+      // Execute callback if provided (deprecated - use component-level navigation instead)
       if (callback) callback();
 
       return { token };
@@ -39,7 +39,7 @@ export const signin = createAsyncThunk(
 
 export const signup = createAsyncThunk(
   'auth/signup',
-  async ({ formData, callback }, { rejectWithValue }) => {
+  async ({ formData, callback } = {}, { rejectWithValue }) => {
     try {
       const response = await axios.post(`${API_BASE_URL}/signup`, formData);
       const { token, refreshToken } = response.data;
@@ -50,7 +50,7 @@ export const signup = createAsyncThunk(
         authService.setTokens(token, refreshToken);
       }
 
-      // Execute callback if provided
+      // Execute callback if provided (deprecated - use component-level navigation instead)
       if (callback) callback();
 
       return { token };

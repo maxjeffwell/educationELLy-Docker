@@ -160,11 +160,12 @@ const Signin = () => {
     dispatch(
       actions.signin({
         formData,
-        callback: () => navigate('/dashboard'),
       })
     );
   };
 
+  // Redirect to dashboard after successful authentication
+  // This ensures Redux state has updated before navigation
   if (isAuthenticated) {
     return <Navigate to="/dashboard" replace />;
   }
