@@ -1,5 +1,5 @@
 import React from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import {
   Form,
@@ -129,17 +129,9 @@ const StyledError = styled.div`
 `;
 
 const Signin = () => {
-  const navigate = useNavigate();
   const dispatch = useDispatch();
   const errorMessage = useSelector(state => state.auth.errorMessage);
   const isAuthenticated = useSelector(state => state.auth.authenticated);
-
-  // Debug logging
-  React.useEffect(() => {
-    console.log('[Signin] isAuthenticated:', isAuthenticated);
-    console.log('[Signin] isAuthenticated type:', typeof isAuthenticated);
-    console.log('[Signin] isAuthenticated truthy:', !!isAuthenticated);
-  }, [isAuthenticated]);
 
   const {
     control,

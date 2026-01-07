@@ -1,5 +1,5 @@
 import React from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import {
   Form,
@@ -130,7 +130,6 @@ const StyledHeader = styled(Header)`
 `;
 
 const Register = () => {
-  const navigate = useNavigate();
   const dispatch = useDispatch();
   const errorMessage = useSelector(state => state.signup.errorMessage);
   const isAuthenticated = useSelector(state => state.auth.authenticated);
