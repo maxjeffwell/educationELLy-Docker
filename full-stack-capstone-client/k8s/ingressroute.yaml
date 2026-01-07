@@ -1,0 +1,16 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: educationelly-client
+  namespace: default
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`educationelly-k8s.el-jefe.me`)
+      kind: Rule
+      services:
+        - name: educationelly-client
+          port: 3000
+  tls:
+    secretName: educationelly-tls
