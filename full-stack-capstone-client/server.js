@@ -25,7 +25,11 @@ app.get('/health', (req, res) => {
 });
 
 // The "catchall" handler: send back React's index.html file for any non-static routes
+// Set headers to prevent Cloudflare from caching the HTML
 app.use((req, res) => {
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
   res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
 
