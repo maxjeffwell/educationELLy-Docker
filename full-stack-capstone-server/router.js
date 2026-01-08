@@ -6,6 +6,7 @@ import {
   generateStudyRecommendations,
   generateFlashcard,
   generateQuiz,
+  chat,
   checkAIHealth
 } from './routes/ai-routes.js';
 
@@ -155,6 +156,7 @@ const Router = (app) => { // Inside this function we have access to our Express 
   app.post('/ai/study-recommendations', requireAuth, generateStudyRecommendations);
   app.post('/ai/flashcard', requireAuth, generateFlashcard);
   app.post('/ai/quiz', requireAuth, generateQuiz);
+  app.post('/ai/chat', requireAuth, chat);
   app.get('/ai/health', checkAIHealth);
 
   // Log AI routes registration

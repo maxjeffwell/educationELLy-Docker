@@ -173,6 +173,68 @@ export async function generateQuiz(req, res) {
 }
 
 /**
+ * POST /ai/chat
+ * Multi-turn conversational chat for educational help
+ *
+ * Body: {
+ *   messages: [{ role: 'user' | 'assistant', content: string }],
+ *   context: {
+ *     userRole?: 'teacher' | 'student',
+ *     gradeLevel?: number,
+ *     ellStatus?: string,
+ *     nativeLanguage?: string,
+ *     studentId?: string
+ *   }
+ * }
+ */
+export async function chat(req, res) {
+  try {
+    const { messages, context = {} } = req.body;
+
+    if (!messages || !Array.isArray(messages) || messages.length === 0) {
+      return res.status(400).json({ error: 'Messages array is required' });
+    }
+
+    // Default context for educationELLy
+    const chatContext = {
+      app: 'educationelly',
+      ...context
+    };
+
+    const response = await fetch(`${AI_GATEWAY_URL}/api/ai/chat`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        messages,
+        context: chatContext,
+        maxTokens: 512,
+        temperature: 0.7
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`AI Gateway error: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    return res.json({
+      success: true,
+      response: data.response,
+      model: data.model,
+      backend: data.backend
+    });
+
+  } catch (error) {
+    console.error('Chat error:', error);
+    return res.status(500).json({
+      error: 'Chat failed',
+      message: error.message
+    });
+  }
+}
+
+/**
  * GET /ai/health
  * Check AI Gateway health
  */
