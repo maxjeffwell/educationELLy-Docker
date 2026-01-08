@@ -39,10 +39,7 @@ const requireAuth = passport.authenticate('jwt', { session: false }); // When a 
 const requireSignin = passport.authenticate('local', { session: false });
 
 const Router = (app) => { // Inside this function we have access to our Express app
-  // Health check endpoint for Kubernetes probes
-  app.get('/health', (req, res) => {
-    res.status(200).json({ status: 'healthy', timestamp: new Date().toISOString() });
-  });
+  // Health check endpoint moved to index.js (before rate limiter)
 
   app.get('/', requireAuth, (req, res) => {
     res.send('GET request to homepage');

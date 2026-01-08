@@ -48,6 +48,11 @@ app.use(helmet());
 app.use(morgan('dev'));
 app.use(bodyParser.json({ limit: '10mb' }));
 
+// Health check endpoint - placed BEFORE rate limiter to avoid 429 errors on K8s probes
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'healthy', timestamp: new Date().toISOString() });
+});
+
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100,
