@@ -57,6 +57,11 @@ spec:
             secretKeyRef:
               name: educationelly-secrets
               key: jwt-secret
+        - name: AI_GATEWAY_URL
+          valueFrom:
+            secretKeyRef:
+              name: educationelly-secrets
+              key: ai-gateway-url
         resources:
           requests:
             cpu: 100m
