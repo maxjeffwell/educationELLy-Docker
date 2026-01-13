@@ -15,6 +15,7 @@ import {
   ErrorMessage,
 } from './AIChat.styles';
 import { API_BASE_URL } from '../../config';
+import authService from '../../utils/auth';
 
 const ChatBubble = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -64,8 +65,8 @@ const ChatBubble = () => {
     setIsLoading(true);
 
     try {
-      // Get auth token from localStorage
-      const token = localStorage.getItem('token');
+      // Get auth token from authService (sessionStorage)
+      const token = authService.getToken();
 
       const response = await fetch(`${API_BASE_URL}/ai/chat`, {
         method: 'POST',
