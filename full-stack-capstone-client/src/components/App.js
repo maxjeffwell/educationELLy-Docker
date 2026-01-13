@@ -9,6 +9,7 @@ import ErrorBoundary from './ErrorBoundary';
 import ModalManager from './ModalManager';
 import authRequired from './authRequired';
 import SessionManagerWrapper from './SessionManagerWrapper';
+import { ChatBubble } from './AIChat';
 
 // Temporarily disable lazy loading for debugging
 import Landing from './Landing';
@@ -76,8 +77,8 @@ const GlobalStyle = createGlobalStyle`
 const App = () => {
   return (
     <BrowserRouter>
+      <GlobalStyle />
       <Container>
-        <GlobalStyle />
         <ErrorBoundary>
           <Header />
           <Routes>
@@ -98,6 +99,7 @@ const App = () => {
           <Footer />
         </ErrorBoundary>
       </Container>
+      <ChatBubble />
     </BrowserRouter>
   );
 };
