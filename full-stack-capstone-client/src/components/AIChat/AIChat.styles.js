@@ -5,11 +5,6 @@ const fadeIn = keyframes`
   to { opacity: 1; transform: translateY(0); }
 `;
 
-const pulse = keyframes`
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-`;
-
 export const ChatBubbleButton = styled.button`
   position: fixed;
   bottom: 24px;
