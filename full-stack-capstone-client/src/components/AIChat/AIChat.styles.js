@@ -9,15 +9,15 @@ export const ChatBubbleButton = styled.button`
   position: fixed;
   bottom: 24px;
   right: 24px;
-  width: 60px;
-  height: 60px;
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
   z-index: 1000;
   background-color: ${props => props.theme.blue};
-  border: 3px solid ${props => props.theme.orange};
+  border: 4px solid ${props => props.theme.orange};
   color: ${props => props.theme.white};
   font-family: 'Roboto', sans-serif;
-  font-size: 1.5rem;
+  font-size: 2rem;
   cursor: pointer;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   transition: all 0.3s ease;
@@ -44,10 +44,10 @@ export const ChatBubbleButton = styled.button`
 
 export const ChatWindowContainer = styled.div`
   position: fixed;
-  bottom: 100px;
+  bottom: 120px;
   right: 24px;
-  width: 380px;
-  height: 500px;
+  width: 450px;
+  height: 600px;
   border-radius: 12px;
   z-index: 1000;
   background: ${props => props.theme.white};

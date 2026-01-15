@@ -41,6 +41,12 @@ const ChatBubble = () => {
     }
   }, [isOpen]);
 
+  // Only show chat bubble on authenticated routes (must be after all hooks)
+  const token = authService.getToken();
+  if (!token) {
+    return null;
+  }
+
   const toggleChat = () => {
     setIsOpen(prev => !prev);
     setError(null);
