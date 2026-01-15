@@ -78,6 +78,12 @@ const Landing = () => {
             <li>Quickly access student lists</li>
             <li>Improve collaboration and manage workflows</li>
             <li>
+              <strong>AI-Powered Assistant:</strong> Get personalized teaching
+              recommendations, generate study materials, and ask questions about
+              ELL best practices using our integrated AI chat. Look for the chat
+              icon in the bottom-right corner after logging in!
+            </li>
+            <li>
               If you have not already logged in, click the Login link in the
               right hand corner and enter the demo account information to access
               your student list and to create, update, and delete student ELL

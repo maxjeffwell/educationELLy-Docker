@@ -180,6 +180,12 @@ const Header = memo(() => {
           <div className="nav-section">
             <button
               className="nav-item"
+              onClick={e => handleMenuItemClick(e, '/')}
+            >
+              About Us
+            </button>
+            <button
+              className="nav-item"
               onClick={e => handleMenuItemClick(e, '/dashboard')}
             >
               Instructor Dashboard
@@ -213,6 +219,12 @@ const Header = memo(() => {
           <LazyImage src={logo} alt="educationELLy logo" />
         </div>
         <div className="nav-section">
+          <button
+            className="nav-item"
+            onClick={e => handleMenuItemClick(e, '/')}
+          >
+            About Us
+          </button>
           <button
             className="nav-item"
             onClick={e => handleMenuItemClick(e, '/signup')}

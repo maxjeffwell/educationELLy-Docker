@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { useSelector } from 'react-redux';
 
 import {
   ChatBubbleButton,
@@ -18,6 +19,9 @@ import { API_BASE_URL } from '../../config';
 import authService from '../../utils/auth';
 
 const ChatBubble = () => {
+  // Subscribe to Redux auth state for reactivity
+  const isAuthenticated = useSelector(state => state.auth.authenticated);
+
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
@@ -41,9 +45,8 @@ const ChatBubble = () => {
     }
   }, [isOpen]);
 
-  // Only show chat bubble on authenticated routes (must be after all hooks)
-  const token = authService.getToken();
-  if (!token) {
+  // Only show chat bubble when authenticated (must be after all hooks)
+  if (!isAuthenticated) {
     return null;
   }
 
