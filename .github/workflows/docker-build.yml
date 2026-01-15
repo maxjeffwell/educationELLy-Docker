@@ -15,8 +15,6 @@ on:
 
 env:
   REGISTRY: docker.io
-  SERVER_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/educationelly-server
-  CLIENT_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/educationelly-client
 
 permissions:
   contents: read
@@ -40,18 +38,36 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      - name: Install Doppler CLI
+        uses: dopplerhq/cli-action@v3
+
+      - name: Get secrets from Doppler
+        id: doppler
+        env:
+          DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN }}
+        run: |
+          echo "username=$(doppler secrets get DOCKERHUB_USERNAME --plain)" >> $GITHUB_OUTPUT
+          echo "password=$(doppler secrets get DOCKERHUB_PASSWORD --plain)" >> $GITHUB_OUTPUT
+          echo "react_app_api_url=$(doppler secrets get REACT_APP_API_URL --plain 2>/dev/null || echo 'https://yourdomain.com/api')" >> $GITHUB_OUTPUT
+
+      - name: Set image names
+        id: images
+        run: |
+          echo "server=${{ steps.doppler.outputs.username }}/educationelly-server" >> $GITHUB_OUTPUT
+          echo "client=${{ steps.doppler.outputs.username }}/educationelly-client" >> $GITHUB_OUTPUT
+
       - name: Log in to Docker Hub
         if: github.event_name != 'pull_request'
         uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          username: ${{ steps.doppler.outputs.username }}
+          password: ${{ steps.doppler.outputs.password }}
 
       - name: Extract metadata for server
         id: meta-server
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.SERVER_IMAGE }}
+          images: ${{ steps.images.outputs.server }}
           tags: |
             type=ref,event=branch
             type=ref,event=pr
@@ -65,7 +81,7 @@ jobs:
         id: meta-client
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.CLIENT_IMAGE }}
+          images: ${{ steps.images.outputs.client }}
           tags: |
             type=ref,event=branch
             type=ref,event=pr
@@ -101,7 +117,7 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           build-args: |
-            REACT_APP_API_URL=${{ secrets.REACT_APP_API_URL || 'https://yourdomain.com/api' }}
+            REACT_APP_API_URL=${{ steps.doppler.outputs.react_app_api_url }}
 
       - name: Image digest
         run: |
@@ -122,10 +138,20 @@ jobs:
     if: github.event_name != 'pull_request'
 
     steps:
+      - name: Install Doppler CLI
+        uses: dopplerhq/cli-action@v3
+
+      - name: Get DockerHub username from Doppler
+        id: doppler
+        env:
+          DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN }}
+        run: |
+          echo "username=$(doppler secrets get DOCKERHUB_USERNAME --plain)" >> $GITHUB_OUTPUT
+
       - name: Run Trivy vulnerability scanner (server)
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: ${{ env.SERVER_IMAGE }}:latest
+          image-ref: ${{ steps.doppler.outputs.username }}/educationelly-server:latest
           format: 'sarif'
           output: 'trivy-server-results.sarif'
 
@@ -138,7 +164,7 @@ jobs:
       - name: Run Trivy vulnerability scanner (client)
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: ${{ env.CLIENT_IMAGE }}:latest
+          image-ref: ${{ steps.doppler.outputs.username }}/educationelly-client:latest
           format: 'sarif'
           output: 'trivy-client-results.sarif'
 
