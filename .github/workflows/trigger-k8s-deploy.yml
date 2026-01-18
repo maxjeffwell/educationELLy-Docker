@@ -1,0 +1,25 @@
+name: Trigger K8s Deploy
+
+on:
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
+    branches: [main, master]
+
+jobs:
+  trigger-deploy:
+    # Only trigger if CI succeeded
+    if: github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger EducationELLy deployment
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.DEPLOY_PAT }}
+          repository: maxjeffwell/devops-portfolio-manager
+          event-type: deploy-educationelly
+          client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}"}'
+
+      - name: Log trigger
+        run: |
+          echo "Triggered deploy-educationelly for commit ${{ github.sha }}"
