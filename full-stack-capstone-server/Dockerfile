@@ -7,9 +7,11 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies
-RUN npm ci --omit=dev && \
-    npm cache clean --force
+# Install dependencies (with build tools for native modules)
+RUN apk add --no-cache python3 make g++ && \
+    npm ci --omit=dev && \
+    npm cache clean --force && \
+    apk del python3 make g++
 
 # Development stage
 FROM node:20-alpine AS development
@@ -39,8 +41,10 @@ WORKDIR /app
 
 # Copy package files and install production dependencies
 COPY package*.json ./
-RUN npm ci --omit=dev && \
-    npm cache clean --force
+RUN apk add --no-cache python3 make g++ && \
+    npm ci --omit=dev && \
+    npm cache clean --force && \
+    apk del python3 make g++
 
 # Copy application code
 COPY . .
