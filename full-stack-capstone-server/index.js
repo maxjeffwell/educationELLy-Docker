@@ -4,16 +4,12 @@ import morgan from 'morgan';
 import http from 'http';
 import express from 'express';
 import bodyParser from 'body-parser';
-import * as path from 'path';
-import { fileURLToPath } from 'url';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import mongoose from 'mongoose';
+import client from 'prom-client';
 import Router from './router.js';
 import validateEnvironment from './utils/envValidation.js';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 import './services/passport.js';
 import './models/student.js';
@@ -31,10 +27,41 @@ if (process.env.NODE_ENV !== 'test') {
 
 const app = express();
 
-// Trust proxy for Heroku
-if (process.env.NODE_ENV === 'production') {
-  app.set('trust proxy', 1);
-}
+// Prometheus metrics setup
+const register = new client.Registry();
+client.collectDefaultMetrics({ register });
+
+const httpRequestsTotal = new client.Counter({
+  name: 'http_requests_total',
+  help: 'Total number of HTTP requests',
+  labelNames: ['method', 'route', 'status'],
+  registers: [register]
+});
+
+const httpRequestDuration = new client.Histogram({
+  name: 'http_request_duration_seconds',
+  help: 'Duration of HTTP requests in seconds',
+  labelNames: ['method', 'route', 'status'],
+  buckets: [0.001, 0.005, 0.015, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 1, 2, 5],
+  registers: [register]
+});
+
+// Metrics middleware (before other middleware)
+app.use((req, res, next) => {
+  if (req.path === '/metrics' || req.path === '/health') return next();
+  const start = process.hrtime.bigint();
+  res.on('finish', () => {
+    const duration = Number(process.hrtime.bigint() - start) / 1e9;
+    const route = req.route?.path || req.path || 'unknown';
+    const labels = { method: req.method, route, status: res.statusCode.toString() };
+    httpRequestsTotal.inc(labels);
+    httpRequestDuration.observe(labels, duration);
+  });
+  next();
+});
+
+// Trust proxy for K8s ingress
+app.set('trust proxy', true);
 
 if (process.env.NODE_ENV !== 'test') {
   mongoose.Promise = global.Promise;
@@ -51,6 +78,12 @@ app.use(bodyParser.json({ limit: '10mb' }));
 // Health check endpoint - placed BEFORE rate limiter to avoid 429 errors on K8s probes
 app.get('/health', (req, res) => {
   res.status(200).json({ status: 'healthy', timestamp: new Date().toISOString() });
+});
+
+// Prometheus metrics endpoint
+app.get('/metrics', async (req, res) => {
+  res.set('Content-Type', register.contentType);
+  res.end(await register.metrics());
 });
 
 const limiter = rateLimit({
@@ -72,7 +105,7 @@ app.use(limiter);
 
 const allowedOrigins = process.env.ALLOWED_ORIGINS
   ? process.env.ALLOWED_ORIGINS.split(',')
-  : ['http://localhost:3000', 'http://localhost:3001', 'https://educationelly-client-71a1b1901aaa.herokuapp.com'];
+  : ['http://localhost:3000', 'http://localhost:3001'];
 
 // CORS configuration
 const corsOptions = {
@@ -108,32 +141,10 @@ app.options('*', cors(corsOptions));
 
 Router(app);
 
-// Create a static server
-
-// production build creates /build directory and we need to tell Express to use it
-
-// Server setup to get Express app to talk to the outside world
-
-if (process.env.NODE_ENV === 'production') {
-  // Express will serve up production assets
-
-  app.use(express.static('client/build'));
-
-  // Express will serve up the index.html file if it doesn't recognize the route
-
-  app.get('*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
-  });
-}
-
 const PORT = process.env.PORT || 8080;
 const server = http.createServer(app);
 
 server.listen(PORT);
-
-// eslint-disable-next-line no-console
 console.log('Server listening on:', PORT);
-
-// Next: add route handlers to Express app in router.js and configure to serve JSON
 
 export default app;
