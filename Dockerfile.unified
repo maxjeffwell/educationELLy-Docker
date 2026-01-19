@@ -10,18 +10,19 @@ FROM node:20-alpine AS client-build
 
 WORKDIR /client
 
-# Build argument for API URL
-ARG REACT_APP_API_BASE_URL=/api
-ENV REACT_APP_API_BASE_URL=$REACT_APP_API_BASE_URL
-
 # Copy client package files
 COPY full-stack-capstone-client/package*.json ./
 
-# Install client dependencies
-RUN npm ci && npm cache clean --force
+# Install client dependencies (BuildKit cache speeds up repeated builds)
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci
 
 # Copy client source code
 COPY full-stack-capstone-client/ .
+
+# Build argument for API URL (after npm ci for better caching)
+ARG REACT_APP_API_BASE_URL=/api
+ENV REACT_APP_API_BASE_URL=$REACT_APP_API_BASE_URL
 
 # Build the React application
 RUN npm run build
@@ -36,8 +37,9 @@ WORKDIR /app
 # Copy server package files
 COPY full-stack-capstone-server/package*.json ./
 
-# Install production dependencies
-RUN npm ci --production && npm cache clean --force
+# Install production dependencies (BuildKit cache speeds up repeated builds)
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci --production
 
 # Copy server application code
 COPY full-stack-capstone-server/ .
