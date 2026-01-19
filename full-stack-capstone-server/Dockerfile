@@ -8,9 +8,9 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies (with build tools for native modules)
-RUN apk add --no-cache python3 make g++ && \
+RUN --mount=type=cache,target=/root/.npm \
+    apk add --no-cache python3 make g++ && \
     npm ci --omit=dev && \
-    npm cache clean --force && \
     apk del python3 make g++
 
 # Development stage
@@ -21,9 +21,9 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Install all dependencies (including dev dependencies)
-RUN npm ci && \
-    npm cache clean --force
+# Install all dependencies (BuildKit cache speeds up repeated builds)
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci
 
 # Copy application code
 COPY . .
@@ -39,11 +39,11 @@ FROM node:20-alpine AS production
 
 WORKDIR /app
 
-# Copy package files and install production dependencies
+# Copy package files and install production dependencies (BuildKit cache speeds up repeated builds)
 COPY package*.json ./
-RUN apk add --no-cache python3 make g++ && \
+RUN --mount=type=cache,target=/root/.npm \
+    apk add --no-cache python3 make g++ && \
     npm ci --omit=dev && \
-    npm cache clean --force && \
     apk del python3 make g++
 
 # Copy application code
