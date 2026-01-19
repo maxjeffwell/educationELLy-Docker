@@ -4,19 +4,19 @@ FROM node:20-alpine AS build
 # Set working directory
 WORKDIR /app
 
-# Build argument for API URL
-ARG REACT_APP_API_BASE_URL
-ENV REACT_APP_API_BASE_URL=$REACT_APP_API_BASE_URL
-
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies
-RUN npm ci && \
-    npm cache clean --force
+# Install dependencies (BuildKit cache speeds up repeated builds)
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci
 
 # Copy application code
 COPY . .
+
+# Build argument for API URL (after npm ci for better caching)
+ARG REACT_APP_API_BASE_URL
+ENV REACT_APP_API_BASE_URL=$REACT_APP_API_BASE_URL
 
 # Build the React application
 RUN npm run build
@@ -29,9 +29,9 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Install all dependencies
-RUN npm ci && \
-    npm cache clean --force
+# Install all dependencies (BuildKit cache speeds up repeated builds)
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci
 
 # Copy application code
 COPY . .
@@ -47,9 +47,9 @@ FROM node:20-alpine AS production
 
 WORKDIR /app
 
-# Install only express for serving static files
-RUN npm install --omit=dev express && \
-    npm cache clean --force
+# Install only express for serving static files (BuildKit cache speeds up repeated builds)
+RUN --mount=type=cache,target=/root/.npm \
+    npm install --omit=dev express
 
 # Copy built application from build stage
 COPY --from=build /app/build ./build
