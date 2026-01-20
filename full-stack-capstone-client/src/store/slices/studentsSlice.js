@@ -36,7 +36,10 @@ export const fetchStudents = createAsyncThunk(
     }
 
     try {
-      const response = await axios.get(`${API_BASE_URL}/students`);
+      // Add cache-busting parameter to bypass CDN cache
+      const response = await axios.get(`${API_BASE_URL}/students`, {
+        params: { _t: Date.now() },
+      });
       return response.data;
     } catch (error) {
       if (error.response?.status === 401) {
