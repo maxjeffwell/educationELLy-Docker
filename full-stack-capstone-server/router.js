@@ -67,15 +67,26 @@ const Router = (app) => { // Inside this function we have access to our Express 
     });
   });
 
-  app.get('/api/students', requireAuth, (req, res) => {
-    Student.find({})
-      .then((result) => {
-        // Add cache headers for Cloudflare edge caching
-        res.set('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300');
-        res.set('CDN-Cache-Control', 'max-age=60');
-        res.json(result);
-      })
-      .catch((err) => handleServerError(res, err, 'Failed to retrieve students'));
+  app.get('/api/students', requireAuth, async (req, res) => {
+    const timings = [];
+    const requestStart = performance.now();
+
+    try {
+      const dbStart = performance.now();
+      const result = await Student.find({});
+      const dbDuration = performance.now() - dbStart;
+      timings.push(`db;dur=${dbDuration.toFixed(2)};desc="MongoDB query"`);
+
+      const total = performance.now() - requestStart;
+      timings.push(`total;dur=${total.toFixed(2)}`);
+
+      res.set('Server-Timing', timings.join(', '));
+      res.set('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300');
+      res.set('CDN-Cache-Control', 'max-age=60');
+      res.json(result);
+    } catch (err) {
+      handleServerError(res, err, 'Failed to retrieve students');
+    }
   });
 
   app.get('/api/students/:id', requireAuth, mongoIdValidation, handleValidationErrors, (req, res) => {
