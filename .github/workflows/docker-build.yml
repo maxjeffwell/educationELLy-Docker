@@ -44,7 +44,7 @@ jobs:
         run: |
           echo "username=$(doppler secrets get DOCKERHUB_USERNAME --plain)" >> $GITHUB_OUTPUT
           echo "password=$(doppler secrets get DOCKERHUB_PASSWORD --plain)" >> $GITHUB_OUTPUT
-          echo "react_app_api_url=$(doppler secrets get REACT_APP_API_URL --plain 2>/dev/null || echo 'https://yourdomain.com/api')" >> $GITHUB_OUTPUT
+          echo "react_app_api_url=$(doppler secrets get REACT_APP_API_URL --plain 2>/dev/null || echo '/api')" >> $GITHUB_OUTPUT
 
       - name: Set image names
         id: images
