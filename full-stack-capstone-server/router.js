@@ -47,27 +47,27 @@ const Router = (app) => { // Inside this function we have access to our Express 
     res.send('GET request to homepage');
   });
 
-  app.post('/signin', requireSignin, Signin);
+  app.post('/api/signin', requireSignin, Signin);
 
-  app.post('/signup', validateSignup, handleValidationErrors, Signup);
+  app.post('/api/signup', validateSignup, handleValidationErrors, Signup);
 
-  app.get('/logout', (req, res) => {
+  app.get('/api/logout', (req, res) => {
     req.logout();
     res.redirect('/');
   });
 
-  app.get('/whoami', requireAuth, (req, res) => res.json(req.user));
+  app.get('/api/whoami', requireAuth, (req, res) => res.json(req.user));
 
-  app.get('/test-auth', requireAuth, (req, res) => {
-    console.log('GET /test-auth - User authenticated:', req.user?.email);
-    res.json({ 
-      message: 'Authentication working', 
+  app.get('/api/test-auth', requireAuth, (req, res) => {
+    console.log('GET /api/test-auth - User authenticated:', req.user?.email);
+    res.json({
+      message: 'Authentication working',
       user: req.user?.email,
       timestamp: new Date().toISOString()
     });
   });
 
-  app.get('/students', requireAuth, (req, res) => {
+  app.get('/api/students', requireAuth, (req, res) => {
     Student.find({})
       .then((result) => {
         // Add cache headers for Cloudflare edge caching
@@ -78,7 +78,7 @@ const Router = (app) => { // Inside this function we have access to our Express 
       .catch((err) => handleServerError(res, err, 'Failed to retrieve students'));
   });
 
-  app.get('/students/:id', requireAuth, mongoIdValidation, handleValidationErrors, (req, res) => {
+  app.get('/api/students/:id', requireAuth, mongoIdValidation, handleValidationErrors, (req, res) => {
     Student.findById(req.params.id)
       .then((result) => {
         if (!result) {
@@ -89,7 +89,7 @@ const Router = (app) => { // Inside this function we have access to our Express 
       .catch((err) => handleServerError(res, err, 'Failed to retrieve student'));
   });
 
-  app.post('/students', requireAuth, studentValidationRules, handleValidationErrors, (req, res) => {
+  app.post('/api/students', requireAuth, studentValidationRules, handleValidationErrors, (req, res) => {
     const newStudent = {
       fullName: req.body.fullName,
       school: req.body.school,
@@ -117,7 +117,7 @@ const Router = (app) => { // Inside this function we have access to our Express 
       .catch((err) => handleServerError(res, err, 'Failed to create student'));
   });
 
-  app.put('/students/:id', requireAuth, mongoIdValidation, studentValidationRules, handleValidationErrors, (req, res) => {
+  app.put('/api/students/:id', requireAuth, mongoIdValidation, studentValidationRules, handleValidationErrors, (req, res) => {
     const updatedStudent = {
       fullName: req.body.fullName,
       school: req.body.school,
@@ -151,7 +151,7 @@ const Router = (app) => { // Inside this function we have access to our Express 
       .catch((err) => handleServerError(res, err, 'Failed to update student'));
   });
 
-  app.delete('/students/:id', requireAuth, mongoIdValidation, handleValidationErrors, (req, res) => {
+  app.delete('/api/students/:id', requireAuth, mongoIdValidation, handleValidationErrors, (req, res) => {
     Student.findOneAndDelete({ _id: req.params.id })
       .then((result) => {
         if (!result) {
@@ -164,11 +164,11 @@ const Router = (app) => { // Inside this function we have access to our Express 
   });
 
   // AI-powered features
-  app.post('/ai/study-recommendations', requireAuth, generateStudyRecommendations);
-  app.post('/ai/flashcard', requireAuth, generateFlashcard);
-  app.post('/ai/quiz', requireAuth, generateQuiz);
-  app.post('/ai/chat', requireAuth, chat);
-  app.get('/ai/health', checkAIHealth);
+  app.post('/api/ai/study-recommendations', requireAuth, generateStudyRecommendations);
+  app.post('/api/ai/flashcard', requireAuth, generateFlashcard);
+  app.post('/api/ai/quiz', requireAuth, generateQuiz);
+  app.post('/api/ai/chat', requireAuth, chat);
+  app.get('/api/ai/health', checkAIHealth);
 
   // Log AI routes registration
   console.log('AI routes registered successfully');

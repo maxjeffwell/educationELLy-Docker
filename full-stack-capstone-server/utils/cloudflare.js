@@ -42,6 +42,6 @@ export async function purgeCache(urls) {
 export async function purgeStudentsCache() {
   const baseUrl = process.env.PUBLIC_URL || 'https://educationelly-k8s.el-jefe.me';
   return purgeCache([
-    `${baseUrl}/students`,
+    `${baseUrl}/api/students`,
   ]);
 }
