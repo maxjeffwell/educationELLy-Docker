@@ -100,7 +100,7 @@ const Router = (app) => { // Inside this function we have access to our Express 
       .catch((err) => handleServerError(res, err, 'Failed to retrieve student'));
   });
 
-  app.post('/api/students', requireAuth, studentValidationRules, handleValidationErrors, (req, res) => {
+  app.post('/api/students', requireAuth, studentValidationRules, handleValidationErrors, async (req, res) => {
     const newStudent = {
       fullName: req.body.fullName,
       school: req.body.school,
@@ -119,16 +119,17 @@ const Router = (app) => { // Inside this function we have access to our Express 
       designation: req.body.designation,
     };
 
-    Student.create(newStudent)
-      .then(() => Student.find({}))
-      .then((result) => {
-        purgeStudentsCache();
-        res.json(result);
-      })
-      .catch((err) => handleServerError(res, err, 'Failed to create student'));
+    try {
+      await Student.create(newStudent);
+      const result = await Student.find({});
+      await purgeStudentsCache();
+      res.json(result);
+    } catch (err) {
+      handleServerError(res, err, 'Failed to create student');
+    }
   });
 
-  app.put('/api/students/:id', requireAuth, mongoIdValidation, studentValidationRules, handleValidationErrors, (req, res) => {
+  app.put('/api/students/:id', requireAuth, mongoIdValidation, studentValidationRules, handleValidationErrors, async (req, res) => {
     const updatedStudent = {
       fullName: req.body.fullName,
       school: req.body.school,
@@ -147,31 +148,34 @@ const Router = (app) => { // Inside this function we have access to our Express 
       designation: req.body.designation,
     };
 
-    Student.findOneAndUpdate({ _id: req.params.id }, updatedStudent, { new: true })
-      .then((result) => {
-        if (!result) {
-          return res.status(404).json({ error: 'Student not found' });
-        }
-        purgeStudentsCache();
-        return res.json({
-          success: true,
-          message: 'Updated successfully',
-          result,
-        });
-      })
-      .catch((err) => handleServerError(res, err, 'Failed to update student'));
+    try {
+      const result = await Student.findOneAndUpdate({ _id: req.params.id }, updatedStudent, { new: true });
+      if (!result) {
+        return res.status(404).json({ error: 'Student not found' });
+      }
+      // Await cache purge to ensure subsequent fetches get fresh data
+      await purgeStudentsCache();
+      return res.json({
+        success: true,
+        message: 'Updated successfully',
+        result,
+      });
+    } catch (err) {
+      return handleServerError(res, err, 'Failed to update student');
+    }
   });
 
-  app.delete('/api/students/:id', requireAuth, mongoIdValidation, handleValidationErrors, (req, res) => {
-    Student.findOneAndDelete({ _id: req.params.id })
-      .then((result) => {
-        if (!result) {
-          return res.status(404).json({ error: 'Student not found' });
-        }
-        purgeStudentsCache();
-        return res.status(204).end();
-      })
-      .catch((err) => handleServerError(res, err, 'Failed to delete student'));
+  app.delete('/api/students/:id', requireAuth, mongoIdValidation, handleValidationErrors, async (req, res) => {
+    try {
+      const result = await Student.findOneAndDelete({ _id: req.params.id });
+      if (!result) {
+        return res.status(404).json({ error: 'Student not found' });
+      }
+      await purgeStudentsCache();
+      return res.status(204).end();
+    } catch (err) {
+      return handleServerError(res, err, 'Failed to delete student');
+    }
   });
 
   // AI-powered features
