@@ -15,8 +15,8 @@ RUN --mount=type=cache,target=/root/.npm \
 COPY . .
 
 # Build argument for API URL (after npm ci for better caching)
-ARG REACT_APP_API_BASE_URL
-ENV REACT_APP_API_BASE_URL=$REACT_APP_API_BASE_URL
+ARG REACT_APP_API_URL=/api
+ENV REACT_APP_API_URL=$REACT_APP_API_URL
 
 # Build the React application
 RUN npm run build
