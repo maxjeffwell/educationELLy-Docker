@@ -9,6 +9,7 @@ import {
   chat,
   checkAIHealth
 } from './routes/ai-routes.js';
+import { purgeStudentsCache } from './utils/cloudflare.js';
 
 // Create an object and insert it between our incoming request and our route handler (i.e. Passport middleware - requireAuth)
 
@@ -68,7 +69,12 @@ const Router = (app) => { // Inside this function we have access to our Express 
 
   app.get('/students', requireAuth, (req, res) => {
     Student.find({})
-      .then((result) => res.json(result))
+      .then((result) => {
+        // Add cache headers for Cloudflare edge caching
+        res.set('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300');
+        res.set('CDN-Cache-Control', 'max-age=60');
+        res.json(result);
+      })
       .catch((err) => handleServerError(res, err, 'Failed to retrieve students'));
   });
 
@@ -104,7 +110,10 @@ const Router = (app) => { // Inside this function we have access to our Express 
 
     Student.create(newStudent)
       .then(() => Student.find({}))
-      .then((result) => res.json(result))
+      .then((result) => {
+        purgeStudentsCache();
+        res.json(result);
+      })
       .catch((err) => handleServerError(res, err, 'Failed to create student'));
   });
 
@@ -132,6 +141,7 @@ const Router = (app) => { // Inside this function we have access to our Express 
         if (!result) {
           return res.status(404).json({ error: 'Student not found' });
         }
+        purgeStudentsCache();
         return res.json({
           success: true,
           message: 'Updated successfully',
@@ -147,6 +157,7 @@ const Router = (app) => { // Inside this function we have access to our Express 
         if (!result) {
           return res.status(404).json({ error: 'Student not found' });
         }
+        purgeStudentsCache();
         return res.status(204).end();
       })
       .catch((err) => handleServerError(res, err, 'Failed to delete student'));
