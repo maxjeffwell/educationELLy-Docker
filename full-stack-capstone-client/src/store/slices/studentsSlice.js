@@ -120,8 +120,10 @@ export const updateStudent = createAsyncThunk(
         `${API_BASE_URL}/students/${id}`,
         studentData
       );
-      // Ensure the returned data has an id field
-      return { ...response.data, id };
+      // Server returns { success, message, result } - extract the student data
+      const updatedStudent = response.data.result || response.data;
+      // Ensure the returned data has an id field for the entity adapter
+      return { ...updatedStudent, id: updatedStudent._id || id };
     } catch (error) {
       if (error.response?.status === 401) {
         authService.clearTokens();
