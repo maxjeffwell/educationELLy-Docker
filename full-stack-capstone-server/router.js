@@ -1,7 +1,16 @@
 import passport from 'passport';
 import { validationResult } from 'express-validator';
 import { Signin, Signup, validateSignup, Refresh, Signout, SignoutAll } from './controllers/authentication.js';
-import { studentValidationRules, mongoIdValidation } from './middleware/validation.js';
+import {
+  studentValidationRules,
+  mongoIdValidation,
+  signinValidationRules,
+  studyRecommendationsValidation,
+  flashcardValidation,
+  quizValidation,
+  chatValidation,
+  validValues,
+} from './middleware/validation.js';
 import {
   generateStudyRecommendations,
   generateFlashcard,
@@ -47,7 +56,7 @@ const Router = (app) => { // Inside this function we have access to our Express 
     res.send('GET request to homepage');
   });
 
-  app.post('/api/signin', requireSignin, Signin);
+  app.post('/api/signin', signinValidationRules, handleValidationErrors, requireSignin, Signin);
 
   app.post('/api/signup', validateSignup, handleValidationErrors, Signup);
 
@@ -66,6 +75,9 @@ const Router = (app) => { // Inside this function we have access to our Express 
   });
 
   app.get('/api/whoami', requireAuth, (req, res) => res.json(req.user));
+
+  // Expose valid field values for frontend dropdowns
+  app.get('/api/valid-values', (req, res) => res.json(validValues));
 
   app.get('/api/test-auth', requireAuth, (req, res) => {
     console.log('GET /api/test-auth - User authenticated:', req.user?.email);
@@ -187,11 +199,11 @@ const Router = (app) => { // Inside this function we have access to our Express 
     }
   });
 
-  // AI-powered features
-  app.post('/api/ai/study-recommendations', requireAuth, generateStudyRecommendations);
-  app.post('/api/ai/flashcard', requireAuth, generateFlashcard);
-  app.post('/api/ai/quiz', requireAuth, generateQuiz);
-  app.post('/api/ai/chat', requireAuth, chat);
+  // AI-powered features with input validation
+  app.post('/api/ai/study-recommendations', requireAuth, studyRecommendationsValidation, handleValidationErrors, generateStudyRecommendations);
+  app.post('/api/ai/flashcard', requireAuth, flashcardValidation, handleValidationErrors, generateFlashcard);
+  app.post('/api/ai/quiz', requireAuth, quizValidation, handleValidationErrors, generateQuiz);
+  app.post('/api/ai/chat', requireAuth, chatValidation, handleValidationErrors, chat);
   app.get('/api/ai/health', checkAIHealth);
 
   // Log AI routes registration

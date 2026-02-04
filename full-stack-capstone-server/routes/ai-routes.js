@@ -16,11 +16,8 @@ const AI_GATEWAY_URL = process.env.AI_GATEWAY_URL || 'http://shared-ai-gateway:8
  */
 export async function generateStudyRecommendations(req, res) {
   try {
+    // Input already validated and sanitized by middleware
     const { gradeLevel, compositeLevel, ellStatus, nativeLanguage } = req.body;
-
-    if (!gradeLevel) {
-      return res.status(400).json({ error: 'Grade level is required' });
-    }
 
     const prompt = `Generate 3 study recommendations for an English Language Learner:
 Grade Level: ${gradeLevel}
@@ -77,11 +74,8 @@ Provide specific, actionable recommendations for improving English language skil
  */
 export async function generateFlashcard(req, res) {
   try {
+    // Input already validated and sanitized by middleware
     const { topic, content, gradeLevel } = req.body;
-
-    if (!topic || !content) {
-      return res.status(400).json({ error: 'Topic and content are required' });
-    }
 
     const response = await fetch(`${AI_GATEWAY_URL}/api/ai/flashcard`, {
       method: 'POST',
@@ -130,11 +124,8 @@ export async function generateFlashcard(req, res) {
  */
 export async function generateQuiz(req, res) {
   try {
+    // Input already validated and sanitized by middleware
     const { topic, difficulty = 'medium', count = 3, gradeLevel } = req.body;
-
-    if (!topic) {
-      return res.status(400).json({ error: 'Topic is required' });
-    }
 
     const fullTopic = gradeLevel ? `${topic} for Grade ${gradeLevel}` : topic;
 
@@ -189,11 +180,8 @@ export async function generateQuiz(req, res) {
  */
 export async function chat(req, res) {
   try {
+    // Input already validated and sanitized by middleware
     const { messages, context = {} } = req.body;
-
-    if (!messages || !Array.isArray(messages) || messages.length === 0) {
-      return res.status(400).json({ error: 'Messages array is required' });
-    }
 
     // Default context for educationELLy
     const chatContext = {
