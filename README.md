@@ -255,11 +255,6 @@ REACT_APP_API_URL=https://yourdomain.com/api
 - AWS EKS, Google GKE, Azure AKS
 - See `KUBERNETES.md` (coming soon)
 
-### 3. Heroku (Legacy - separate repos)
-- Client: https://educationelly-client.herokuapp.com
-- Server: https://educationelly-server.herokuapp.com
-- Individual repos maintained for Heroku compatibility
-
 ## Contributing
 
 1. Fork the repository

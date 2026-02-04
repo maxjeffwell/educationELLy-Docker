@@ -39,10 +39,19 @@ const localLogin = new LocalStrategy(localOptions, async (email, password, done)
   }
 });
 
-// Set up options for JWT Strategy
+// Custom extractor: try cookie first, then Authorization header (for backward compatibility)
+const cookieOrHeaderExtractor = (req) => {
+  // Try httpOnly cookie first (preferred, more secure)
+  if (req.cookies?.accessToken) {
+    return req.cookies.accessToken;
+  }
+  // Fallback to Authorization header (for mobile apps, external clients)
+  return ExtractJwt.fromAuthHeaderWithScheme('Bearer')(req);
+};
 
-const jwtOptions = { // have to tell JWT strategy where to look on request in order to find this key or secret
-  jwtFromRequest: ExtractJwt.fromAuthHeaderWithScheme('Bearer'),
+// Set up options for JWT Strategy
+const jwtOptions = {
+  jwtFromRequest: cookieOrHeaderExtractor,
   secretOrKey: process.env.JWT_SECRET,
   ignoreExpiration: false, // Explicitly reject expired tokens
   passReqToCallback: false,

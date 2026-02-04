@@ -24,7 +24,7 @@
 - <span style="color: #86c64e">📊 **Student Management**</span> - Full CRUD operations for ELL student profiles
 - <span style="color: #fb9438">🔒 **Protected Routes**</span> - Role-based access control for sensitive data
 - <span style="color: #2873b4">📱 **RESTful API**</span> - Clean, intuitive API design following REST principles
-- <span style="color: #86c64e">🚀 **Production Ready**</span> - Deployed on Heroku with MongoDB Atlas
+- <span style="color: #86c64e">🚀 **Production Ready**</span> - Docker containerized with MongoDB Atlas support
 - <span style="color: #fb9438">✅ **Validation**</span> - Input validation and error handling
 
 ## <span style="color: #86c64e">🎯 Demo Account</span>
@@ -153,8 +153,7 @@ educationELLy-server/
 ├── .env                    # Environment variables
 ├── .babelrc                # Babel configuration
 ├── .eslintrc.js            # ESLint rules
-├── package.json            # Dependencies & scripts
-└── Procfile                # Heroku deployment
+└── package.json            # Dependencies & scripts
 ```
 
 ## <span style="color: #2873b4">🔒 Authentication & Security</span>
@@ -206,23 +205,24 @@ npm run test2
 
 ## <span style="color: #86c64e">🚀 Deployment</span>
 
-### <span style="color: #fb9438">☁️ Heroku Deployment</span>
+### <span style="color: #fb9438">🐳 Docker Deployment</span>
 
-1. Create a Heroku app:
+1. Build the Docker image:
    ```bash
-   heroku create your-app-name
+   docker build -t educationelly-server .
    ```
 
-2. Set environment variables:
+2. Run with environment variables:
    ```bash
-   heroku config:set MONGODB_URI=your_mongodb_atlas_uri
-   heroku config:set JWT_SECRET=your_production_secret
+   docker run -d \
+     -e MONGODB_URI=your_mongodb_atlas_uri \
+     -e JWT_SECRET=your_production_secret \
+     -e NODE_ENV=production \
+     -p 8080:8080 \
+     educationelly-server
    ```
 
-3. Deploy:
-   ```bash
-   git push heroku master
-   ```
+See [DOCKER.md](../DOCKER.md) for full Docker Compose setup.
 
 ### <span style="color: #2873b4">🌍 Environment Variables</span>
 

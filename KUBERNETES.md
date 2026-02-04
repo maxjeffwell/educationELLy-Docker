@@ -528,16 +528,6 @@ Update your GitHub Actions workflow to deploy to Kubernetes:
    helm install loki grafana/loki-stack -n monitoring
    ```
 
-## Migration from Heroku
-
-**Checklist:**
-- [ ] Deploy to Kubernetes (this guide)
-- [ ] Test thoroughly in staging
-- [ ] Update DNS to point to K8s LoadBalancer
-- [ ] Monitor for 24-48 hours
-- [ ] Keep Heroku running as backup
-- [ ] Scale down/delete Heroku apps after confirmation
-
 ## Additional Resources
 
 - [DigitalOcean Kubernetes Documentation](https://docs.digitalocean.com/products/kubernetes/)

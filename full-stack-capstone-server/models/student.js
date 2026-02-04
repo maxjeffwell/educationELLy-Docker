@@ -23,6 +23,20 @@ const studentSchema = new Schema({
   designation: String,
 });
 
+// Database indexes for query performance optimization
+// Single field indexes for common queries
+studentSchema.index({ fullName: 1 });
+studentSchema.index({ ellStatus: 1 });
+studentSchema.index({ gradeLevel: 1 });
+studentSchema.index({ teacher: 1 });
+studentSchema.index({ school: 1 });
+studentSchema.index({ active: 1 });
+
+// Compound indexes for common filter combinations
+studentSchema.index({ school: 1, active: 1 });
+studentSchema.index({ ellStatus: 1, active: 1 });
+studentSchema.index({ teacher: 1, gradeLevel: 1 });
+
 const StudentClass = mongoose.models.student || mongoose.model('student', studentSchema);
 
 export default StudentClass;

@@ -46,11 +46,11 @@ educationELLy uses a JWT (JSON Web Token) based authentication system for secure
 - Secure token transmission over HTTPS in production
 - No sensitive data stored in the JWT payload
 
-## 🚀 Live Demo
+## 🚀 Deployment
 
-**Demo URL**: [https://educationelly-client-71a1b1901aaa.herokuapp.com/](https://educationelly-client-71a1b1901aaa.herokuapp.com/)
+This application is containerized with Docker. See [DOCKER.md](../DOCKER.md) for deployment instructions.
 
-**Demo Credentials**:
+**Demo Credentials** (for local development):
 
 ```
 Username: demo
@@ -283,11 +283,11 @@ The application will open at [http://localhost:3000](http://localhost:3000)
 
 ### Infrastructure
 
-- [ ] **Move from Heroku** - Migrate to modern hosting (Vercel, Netlify, or AWS)
+- [x] **Docker Support** - Application is fully containerized
+- [x] **Error Tracking** - Sentry integration implemented
 - [ ] **CDN Integration** - Improve asset delivery speed
-- [ ] **Error Tracking** - Implement Sentry or similar service
 - [ ] **Analytics** - Add user behavior tracking
-- [ ] **API Rate Limiting** - Prevent abuse and ensure fair usage
+- [ ] **Kubernetes Deployment** - Production-ready K8s manifests
 
 ## 🤝 Contributing
 

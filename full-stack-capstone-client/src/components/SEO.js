@@ -2,21 +2,32 @@ import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import PropTypes from 'prop-types';
 
+// Site URL from environment or default to current origin
+const getSiteUrl = () => {
+  if (process.env.REACT_APP_SITE_URL) {
+    return process.env.REACT_APP_SITE_URL;
+  }
+  if (typeof window !== 'undefined') {
+    return window.location.origin;
+  }
+  return 'https://educationelly.com';
+};
+
 const SEO = ({
   title = 'educationELLy: Where All Teachers Are Language Teachers',
   description = 'A comprehensive platform helping mainstream teachers engage with English Language Learning (ELL) students through integrated curriculum development, student tracking, and language proficiency assessment tools.',
   keywords = 'ELL, English Language Learning, education, teachers, language instruction, student tracking, proficiency assessment, mainstream integration, curriculum development',
-  canonicalUrl = 'https://educationelly-client-71a1b1901aaa.herokuapp.com',
-  ogImage = 'https://educationelly-client-71a1b1901aaa.herokuapp.com/og-image.png',
+  canonicalUrl = '',
+  ogImage = '/og-image.png',
   ogType = 'website',
   twitterCard = 'summary_large_image',
   noIndex = false,
   structuredData = null,
 }) => {
-  const siteUrl = 'https://educationelly-client-71a1b1901aaa.herokuapp.com';
-  const fullUrl = canonicalUrl.startsWith('http')
-    ? canonicalUrl
-    : `${siteUrl}${canonicalUrl}`;
+  const siteUrl = getSiteUrl();
+  const fullUrl = canonicalUrl
+    ? (canonicalUrl.startsWith('http') ? canonicalUrl : `${siteUrl}${canonicalUrl}`)
+    : siteUrl;
   const fullImageUrl = ogImage.startsWith('http')
     ? ogImage
     : `${siteUrl}${ogImage}`;

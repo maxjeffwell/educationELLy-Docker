@@ -1,64 +1,39 @@
 import axios from 'axios';
 import { API_BASE_URL } from '../config';
 
-const TOKEN_KEY = 'jwtToken';
-const REFRESH_TOKEN_KEY = 'refreshToken';
+// Configure axios to send cookies with all requests
+axios.defaults.withCredentials = true;
+
+// Track authentication state in memory (since we can't read httpOnly cookies)
+let isUserAuthenticated = false;
+let currentUser = null;
 
 class AuthService {
   constructor() {
     this.setupInterceptors();
+    // Check auth status on initialization
+    this.checkAuthStatus();
   }
 
   setupInterceptors() {
-    // Request interceptor to add token to all requests
-    axios.interceptors.request.use(
-      config => {
-        const token = this.getToken();
-        if (token && config.url.startsWith(API_BASE_URL)) {
-          config.headers.Authorization = `Bearer ${token}`;
-        }
-
-        // Add CSRF token if available
-        const csrfToken = this.getCSRFToken();
-        if (csrfToken) {
-          config.headers['X-CSRF-Token'] = csrfToken;
-        }
-
-        return config;
-      },
-      error => {
-        return Promise.reject(error);
-      }
-    );
-
-    // Response interceptor to handle token expiration
+    // Response interceptor to handle token expiration and auto-refresh
     axios.interceptors.response.use(
       response => response,
       async error => {
         const originalRequest = error.config;
 
+        // If 401 and haven't already retried, attempt token refresh
         if (error.response?.status === 401 && !originalRequest._retry) {
           originalRequest._retry = true;
 
           try {
-            const refreshToken = this.getRefreshToken();
-            if (refreshToken) {
-              const response = await axios.post(
-                `${API_BASE_URL}/refresh-token`,
-                {
-                  refreshToken,
-                }
-              );
-
-              const { token, refreshToken: newRefreshToken } = response.data;
-              this.setTokens(token, newRefreshToken);
-
-              originalRequest.headers.Authorization = `Bearer ${token}`;
-              return axios(originalRequest);
-            }
+            // Try to refresh the access token using the refresh token cookie
+            await axios.post(`${API_BASE_URL}/refresh`);
+            // Retry the original request (cookies will be sent automatically)
+            return axios(originalRequest);
           } catch (refreshError) {
-            this.clearTokens();
-            window.location.href = '/signin';
+            // Refresh failed - user needs to log in again
+            this.handleAuthFailure();
             return Promise.reject(refreshError);
           }
         }
@@ -68,121 +43,145 @@ class AuthService {
     );
   }
 
-  // Use sessionStorage for better security (cleared when browser closes)
-  // In production, consider httpOnly cookies instead
-  setTokens(token, refreshToken) {
-    if (token) {
-      sessionStorage.setItem(TOKEN_KEY, token);
-    }
-    if (refreshToken) {
-      sessionStorage.setItem(REFRESH_TOKEN_KEY, refreshToken);
+  /**
+   * Check authentication status by calling the whoami endpoint
+   * This is needed because we can't read httpOnly cookies
+   */
+  async checkAuthStatus() {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/whoami`);
+      isUserAuthenticated = true;
+      currentUser = response.data;
+      return { authenticated: true, user: currentUser };
+    } catch (error) {
+      isUserAuthenticated = false;
+      currentUser = null;
+      return { authenticated: false, user: null };
     }
   }
 
-  setToken(token) {
-    if (token) {
-      sessionStorage.setItem(TOKEN_KEY, token);
+  /**
+   * Handle successful authentication
+   */
+  handleAuthSuccess(user) {
+    isUserAuthenticated = true;
+    currentUser = user;
+  }
+
+  /**
+   * Handle authentication failure (logout, token expiration, etc.)
+   */
+  handleAuthFailure() {
+    isUserAuthenticated = false;
+    currentUser = null;
+    // Clean up any legacy localStorage tokens
+    this.clearLegacyTokens();
+  }
+
+  /**
+   * Check if user is authenticated (based on in-memory state)
+   * Note: This is a synchronous check; use checkAuthStatus() for server verification
+   */
+  isAuthenticated() {
+    return isUserAuthenticated;
+  }
+
+  /**
+   * Get current user info
+   */
+  getCurrentUser() {
+    return currentUser;
+  }
+
+  /**
+   * Sign out - calls server to invalidate tokens and clear cookies
+   */
+  async signout() {
+    try {
+      await axios.post(`${API_BASE_URL}/signout`);
+    } catch (error) {
+      console.error('Signout error:', error);
+    } finally {
+      this.handleAuthFailure();
     }
   }
 
-  getToken() {
-    const token = sessionStorage.getItem(TOKEN_KEY);
-
-    // Fallback to localStorage if not in sessionStorage
-    if (!token) {
-      const localStorageToken = localStorage.getItem(TOKEN_KEY);
-      if (localStorageToken) {
-        this.setToken(localStorageToken);
-        localStorage.removeItem(TOKEN_KEY);
-        return localStorageToken;
-      }
+  /**
+   * Sign out from all devices
+   */
+  async signoutAll() {
+    try {
+      await axios.post(`${API_BASE_URL}/signout-all`);
+    } catch (error) {
+      console.error('Signout all error:', error);
+    } finally {
+      this.handleAuthFailure();
     }
-
-    return token;
   }
 
-  getRefreshToken() {
-    return sessionStorage.getItem(REFRESH_TOKEN_KEY);
-  }
+  /**
+   * Clear any legacy tokens from localStorage/sessionStorage
+   * (migration from old auth system)
+   */
+  clearLegacyTokens() {
+    const TOKEN_KEY = 'jwtToken';
+    const REFRESH_TOKEN_KEY = 'refreshToken';
 
-  clearTokens() {
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(REFRESH_TOKEN_KEY);
     sessionStorage.removeItem(TOKEN_KEY);
     sessionStorage.removeItem(REFRESH_TOKEN_KEY);
   }
 
-  isAuthenticated() {
-    const token = this.getToken();
-    if (!token) return false;
+  /**
+   * Migrate from old token-based auth to cookie-based auth
+   * Call this once on app initialization
+   */
+  migrateLegacyAuth() {
+    // Clear any old tokens - the server will handle auth via cookies now
+    this.clearLegacyTokens();
+  }
 
-    try {
-      // Check token format
-      const parts = token.split('.');
+  // Deprecated methods - kept for backward compatibility
+  // These will log warnings in development
 
-      if (parts.length !== 3) {
-        return false;
-      }
-
-      // Decode JWT to check expiration
-      const payload = JSON.parse(atob(parts[1]));
-
-      // Check if token has expiration
-      if (!payload.exp) {
-        return true;
-      }
-
-      // Handle different timestamp formats
-      let exp = payload.exp;
-
-      // If exp is already in milliseconds (very large number)
-      if (exp > 9999999999) {
-        // exp is already in milliseconds
-      } else {
-        // Convert seconds to milliseconds
-        exp = exp * 1000;
-      }
-
-      const now = Date.now();
-      const isValid = now < exp;
-
-      return isValid;
-    } catch (error) {
-      // As a last resort, if we have a token but can't validate it,
-      // let's try to use it anyway and let the server decide
-      return true;
+  setTokens() {
+    if (process.env.NODE_ENV === 'development') {
+      console.warn('AuthService.setTokens() is deprecated. Tokens are now managed via httpOnly cookies.');
     }
   }
 
+  setToken() {
+    if (process.env.NODE_ENV === 'development') {
+      console.warn('AuthService.setToken() is deprecated. Tokens are now managed via httpOnly cookies.');
+    }
+  }
+
+  getToken() {
+    if (process.env.NODE_ENV === 'development') {
+      console.warn('AuthService.getToken() is deprecated. Tokens are now managed via httpOnly cookies.');
+    }
+    return null;
+  }
+
+  getRefreshToken() {
+    if (process.env.NODE_ENV === 'development') {
+      console.warn('AuthService.getRefreshToken() is deprecated. Tokens are now managed via httpOnly cookies.');
+    }
+    return null;
+  }
+
+  clearTokens() {
+    this.clearLegacyTokens();
+  }
+
   getCSRFToken() {
-    // Get CSRF token from meta tag or cookie
+    // Get CSRF token from meta tag or cookie (if implemented)
     const metaTag = document.querySelector('meta[name="csrf-token"]');
     if (metaTag) {
       return metaTag.getAttribute('content');
     }
-
-    // Fallback to cookie
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; csrf-token=`);
-    if (parts.length === 2) {
-      return parts.pop().split(';').shift();
-    }
-
     return null;
-  }
-
-  // Migrate existing localStorage tokens to sessionStorage
-  migrateTokens() {
-    const localToken = localStorage.getItem(TOKEN_KEY);
-    const localRefreshToken = localStorage.getItem(REFRESH_TOKEN_KEY);
-
-    if (localToken) {
-      sessionStorage.setItem(TOKEN_KEY, localToken);
-      localStorage.removeItem(TOKEN_KEY);
-    }
-
-    if (localRefreshToken) {
-      sessionStorage.setItem(REFRESH_TOKEN_KEY, localRefreshToken);
-      localStorage.removeItem(REFRESH_TOKEN_KEY);
-    }
   }
 }
 

@@ -358,7 +358,6 @@ educationELLy/
 │   ├── SECURITY_IMPROVEMENTS.md      # Security enhancement documentation
 │   ├── LICENSE                       # GNU GPLv3 license
 │   ├── Dockerfile                    # Client container configuration
-│   ├── Procfile                      # Heroku deployment configuration
 │   ├── commitlint.config.js          # Commit message linting configuration
 │   ├── package.json                  # Client dependencies and scripts
 │   ├── package-lock.json             # Locked dependency versions
@@ -401,7 +400,6 @@ educationELLy/
 │   ├── README.md                     # Server documentation
 │   ├── LICENSE                       # GNU GPLv3 license
 │   ├── Dockerfile                    # Server container configuration
-│   ├── Procfile                      # Heroku deployment configuration
 │   ├── package.json                  # Server dependencies and scripts
 │   ├── package-lock.json             # Locked dependency versions
 │   ├── index.js                      # Main server entry point
@@ -606,10 +604,6 @@ educationELLy/
   - Amazon Web Services cloud platform
   - Services: EC2 (VPS), EKS (Kubernetes)
 
-- **Heroku**: https://www.heroku.com/
-  - Platform as a Service for legacy deployment
-  - Status: Legacy support maintained
-
 #### Version Control & CI/CD
 - **GitHub**: https://github.com/
   - Code hosting and CI/CD platform
@@ -752,13 +746,6 @@ educationELLy/
   - Advanced monitoring with Prometheus/Grafana
   - Self-healing and rolling updates
 - **Status**: Coming soon - manifests prepared in k8s/ directory
-
-##### Option 3: Heroku (Legacy)
-- **Description**: Legacy deployment option
-- **Status**: Separate repos maintained for Heroku compatibility
-- **URLs**:
-  - Client: https://educationelly-client.herokuapp.com
-  - Server: https://educationelly-server.herokuapp.com
 
 #### CI/CD Pipeline
 - **Platform**: GitHub Actions

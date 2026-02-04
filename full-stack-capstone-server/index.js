@@ -4,12 +4,14 @@ import morgan from 'morgan';
 import http from 'http';
 import express from 'express';
 import bodyParser from 'body-parser';
+import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import mongoose from 'mongoose';
 import client from 'prom-client';
 import Router from './router.js';
 import validateEnvironment from './utils/envValidation.js';
+import { initSentry, sentryErrorHandler } from './utils/sentry.js';
 
 import './services/passport.js';
 import './models/student.js';
@@ -26,6 +28,9 @@ if (process.env.NODE_ENV !== 'test') {
 }
 
 const app = express();
+
+// Initialize Sentry early (before routes)
+initSentry(app);
 
 // Prometheus metrics setup
 const register = new client.Registry();
@@ -74,6 +79,7 @@ if (process.env.NODE_ENV !== 'test') {
 app.use(helmet());
 app.use(morgan('dev'));
 app.use(bodyParser.json({ limit: '10mb' }));
+app.use(cookieParser());
 
 // Health check endpoint - placed BEFORE rate limiter to avoid 429 errors on K8s probes
 app.get('/health', (req, res) => {
@@ -140,6 +146,9 @@ app.use(cors(corsOptions));
 app.options('*', cors(corsOptions));
 
 Router(app);
+
+// Sentry error handler (must be after routes, before other error handlers)
+app.use(sentryErrorHandler());
 
 const PORT = process.env.PORT || 8080;
 const server = http.createServer(app);

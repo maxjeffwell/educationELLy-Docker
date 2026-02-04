@@ -11,7 +11,6 @@ export const SecurityConfig = {
     'connect-src': [
       "'self'",
       process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080',
-      'https://educationelly-server-3147a4688b8b.herokuapp.com',
     ],
   },
 

@@ -35,11 +35,15 @@ import 'semantic-ui-css/components/loader.css';
 import { store } from './store';
 import App from './components/App';
 import authService from './utils/auth';
+import { initSentry } from './utils/sentry';
 import {
   measureWebVitals,
   logBundleSize,
   logMemoryUsage,
 } from './utils/performance';
+
+// Initialize Sentry early for error tracking
+initSentry();
 
 // Optimized font loading with fallback
 WebFont.load({

@@ -1,6 +1,6 @@
 import passport from 'passport';
 import { validationResult } from 'express-validator';
-import { Signin, Signup, validateSignup } from './controllers/authentication.js';
+import { Signin, Signup, validateSignup, Refresh, Signout, SignoutAll } from './controllers/authentication.js';
 import { studentValidationRules, mongoIdValidation } from './middleware/validation.js';
 import {
   generateStudyRecommendations,
@@ -51,9 +51,18 @@ const Router = (app) => { // Inside this function we have access to our Express 
 
   app.post('/api/signup', validateSignup, handleValidationErrors, Signup);
 
+  // Token refresh endpoint (uses refresh token cookie)
+  app.post('/api/refresh', Refresh);
+
+  // Signout - invalidates current session
+  app.post('/api/signout', Signout);
+
+  // Signout from all devices - requires authentication
+  app.post('/api/signout-all', requireAuth, SignoutAll);
+
+  // Legacy logout redirect (backward compatibility)
   app.get('/api/logout', (req, res) => {
-    req.logout();
-    res.redirect('/');
+    res.redirect(307, '/api/signout');
   });
 
   app.get('/api/whoami', requireAuth, (req, res) => res.json(req.user));

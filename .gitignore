@@ -120,8 +120,7 @@ coverage/
 .artiforge/
 
 # ============================================
-# IMPORTANT: Nested Git Repositories
-# (Keeping these for Heroku deployment)
+# Nested Git Repositories
 # ============================================
 # Uncomment these if you want to ignore nested .git folders
 # full-stack-capstone-client/.git/
