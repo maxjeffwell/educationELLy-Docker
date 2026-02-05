@@ -31,79 +31,161 @@ export const StyledForm = styled(Form)`
     display: block !important;
   }
 
- &&& form.ui.form {
+  &&& form.ui.form {
     display: grid;
+    grid-template-columns: 1fr;
     min-width: 372px;
     padding-bottom: 0;
     align-items: flex-start;
   }
+
+  /* All form fields should take full width */
   &&& div.field {
     text-align: center;
+    width: 100% !important;
   }
+
   &&& .icon {
     size: 100px;
   }
+
+  /* ========== TEXT INPUT: LABEL STYLING ========== */
+  &&& .ui.labeled.input > .ui.label {
+    border: 2px solid ${props => props.theme.orange};
+    border-radius: 5px 0 0 5px;
+    border-right: none;
+    width: 50px;
+    min-width: 50px;
+    max-width: 50px;
+    text-align: center;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    background-color: ${props => props.theme.white};
+    margin: 0 !important;
+    padding: 0.5em !important;
   }
-  &&& .ui.labeled.input:not([class*="corner labeled"])
-  .label:first-child+input {
+
+  /* ========== TEXT INPUT: CONTAINER ========== */
+  &&& .ui.labeled.input {
+    display: flex !important;
+    width: 100%;
+  }
+
+  /* ========== TEXT INPUT: INPUT ELEMENT ========== */
+  &&& .ui.labeled.input > input {
     font-family: 'Roboto', 'sans-serif';
     font-size: 2em;
     font-weight: 700;
     color: ${props => props.theme.blue};
     padding: 5px 5px 5px 10px;
     background-color: ${props => props.theme.white};
-    border-top: 2px solid ${props => props.theme.green};
-    border-right: 2px solid ${props => props.theme.green};
-    border-bottom: 2px solid ${props => props.theme.green};
-    margin-right: auto;
-  }
-  &&& .ui.label {
-    border: 2px solid ${props => props.theme.orange};
-    border-radius: 5px;
-    width: 50px;
-    text-align: center;
-  }
-  &&& .ui.red {
-    color: red;
-    font-family: 'Roboto','sans-serif';
-    font-size: 1.5em;
-    font-weight: bold;
-    border: none;
+    border: 2px solid ${props => props.theme.green};
+    border-left: none;
+    border-radius: 0 5px 5px 0;
+    flex: 1;
+    min-height: 48px;
   }
 
-  /* Semantic UI Dropdown styling - match text inputs exactly */
-  &&& .ui.selection.dropdown {
+  &&& .ui.labeled.input > input::placeholder {
+    color: rgba(191, 191, 191, 0.87);
+    font-weight: 700;
+  }
+
+  /* ========== DROPDOWN: FIELD CONTAINER (ensure full width) ========== */
+  &&& .labeled-select-field {
+    width: 100% !important;
+  }
+
+  /* ========== DROPDOWN: CUSTOM CONTAINER ========== */
+  &&& .labeled-select-container {
+    display: flex !important;
+    width: 100% !important;
+    align-items: stretch;
+  }
+
+  /* ========== DROPDOWN: ICON LABEL (matches text input labels) ========== */
+  &&& .labeled-select-container > .select-icon-label {
+    border: 2px solid ${props => props.theme.orange} !important;
+    border-radius: 5px 0 0 5px !important;
+    border-right: none !important;
+    width: 50px !important;
+    min-width: 50px !important;
+    max-width: 50px !important;
+    text-align: center !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background-color: ${props => props.theme.white} !important;
+    margin: 0 !important;
+    padding: 0.5em !important;
+  }
+
+  /* ========== DROPDOWN: SELECTION ELEMENT ========== */
+  &&& .labeled-select-container > .ui.selection.dropdown {
     font-family: 'Roboto', 'sans-serif' !important;
     font-size: 2em !important;
     font-weight: 700 !important;
-    min-height: auto !important;
+    color: ${props => props.theme.blue} !important;
     padding: 5px 5px 5px 10px !important;
     background-color: ${props => props.theme.white} !important;
-    border-top: 2px solid ${props => props.theme.green} !important;
-    border-right: 2px solid ${props => props.theme.green} !important;
-    border-bottom: 2px solid ${props => props.theme.green} !important;
+    border: 2px solid ${props => props.theme.green} !important;
     border-left: none !important;
-    border-radius: 0 !important;
-    border-top-right-radius: 5px !important;
-    border-bottom-right-radius: 5px !important;
+    border-radius: 0 5px 5px 0 !important;
+    min-height: 48px !important;
+    height: auto !important;
     line-height: 1.2em !important;
+    flex: 1 1 auto !important;
+    display: flex !important;
+    align-items: center !important;
+    min-width: 0 !important;
+    width: 100% !important;
   }
 
+  /* Placeholder text styling for dropdowns */
   &&& .ui.selection.dropdown .default.text {
     color: rgba(191, 191, 191, 0.87) !important;
+    font-weight: 700 !important;
   }
 
-  &&& .ui.selection.dropdown .text {
+  /* Selected value text styling */
+  &&& .ui.selection.dropdown > .text {
     color: ${props => props.theme.blue} !important;
   }
 
+  /* Dropdown arrow icon positioning */
+  &&& .ui.selection.dropdown > .dropdown.icon {
+    padding: 0.5em !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    right: 0.5em !important;
+    margin: 0 !important;
+  }
+
+  /* Dropdown menu styling */
   &&& .ui.selection.dropdown .menu {
     font-size: 0.5em !important;
+    border-color: ${props => props.theme.green} !important;
+    max-height: 200px !important;
   }
 
   &&& .ui.selection.dropdown .menu > .item {
     font-size: 1em !important;
-    padding: 0.5em 1em !important;
+    padding: 0.75em 1em !important;
+    color: ${props => props.theme.blue} !important;
+  }
+
+  &&& .ui.selection.dropdown .menu > .item:hover {
+    background-color: rgba(134, 198, 78, 0.1) !important;
+  }
+
+  /* ========== ERROR STATE STYLING ========== */
+  &&& .ui.red {
+    color: red;
+    font-family: 'Roboto', 'sans-serif';
+    font-size: 1.5em;
+    font-weight: bold;
+    border: none;
   }
 
   /* Override error state background for dropdowns */
@@ -112,12 +194,22 @@ export const StyledForm = styled(Form)`
     border-color: ${props => props.theme.green} !important;
   }
 
-  /* Error label positioning */
+  /* Error label positioning - below the field */
   &&& .ui.pointing.prompt.label {
     display: block !important;
     margin-top: 0.5em !important;
     margin-left: 50px !important;
     width: auto !important;
+    background-color: #fff6f6 !important;
+    border: 1px solid #e0b4b4 !important;
+    color: #9f3a38 !important;
+    border-radius: 4px !important;
+  }
+
+  /* Remove default Semantic UI error styling for text inputs */
+  &&& .field.error .ui.labeled.input > input {
+    background-color: ${props => props.theme.white};
+    border-color: ${props => props.theme.green};
   }
 `;
 

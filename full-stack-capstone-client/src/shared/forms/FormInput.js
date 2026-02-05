@@ -120,6 +120,7 @@ export const LabeledFormInput = ({
 };
 
 // Select component using Semantic UI Dropdown - styled to match LabeledFormInput
+// Uses custom flex container to achieve same visual structure as labeled inputs
 export const LabeledFormSelect = ({
   name,
   control,
@@ -139,9 +140,9 @@ export const LabeledFormSelect = ({
         field: { onChange, value, onBlur },
         fieldState: { error },
       }) => (
-        <Form.Field error={!!error}>
-          <div className="ui left labeled input">
-            <Label>{label}</Label>
+        <Form.Field error={!!error} className="labeled-select-field">
+          <div className="labeled-select-container">
+            <Label className="select-icon-label">{label}</Label>
             <Dropdown
               selection
               placeholder={placeholder}
@@ -153,7 +154,7 @@ export const LabeledFormSelect = ({
             />
           </div>
           {error && (
-            <Label pointing prompt>
+            <Label pointing prompt className="field-error-label">
               {error.message}
             </Label>
           )}
