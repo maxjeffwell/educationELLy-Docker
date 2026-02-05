@@ -12,7 +12,12 @@ import {
 } from '../studentsSlice';
 import { showModal, hideModal } from '../../modals';
 import { validationRules } from '../../../validators/hookFormValidators';
-import { LabeledFormInput } from '../../../shared';
+import {
+  LabeledFormInput,
+  LabeledFormSelect,
+  VALID_DESIGNATIONS,
+  VALID_COMPOSITE_LEVELS,
+} from '../../../shared';
 import DeleteStudent from './DeleteStudent';
 
 export const StyledForm = styled(Form)`
@@ -259,26 +264,20 @@ const UpdateStudent = () => {
             placeholder="enter ELL Status"
           />
 
-          <LabeledFormInput
+          <LabeledFormSelect
             name="compositeLevel"
             control={control}
-            label={{
-              content: <Icon color="green" name="percent" size="large" />,
-            }}
-            labelPosition="left"
-            placeholder="enter composite level (overall)"
+            label={<Icon color="green" name="percent" size="large" />}
+            placeholder="select composite level"
+            options={VALID_COMPOSITE_LEVELS}
           />
 
-          <LabeledFormInput
+          <LabeledFormSelect
             name="designation"
             control={control}
-            label={{
-              content: (
-                <Icon color="blue" name="universal access" size="large" />
-              ),
-            }}
-            labelPosition="left"
-            placeholder="enter ELL, Special Education, or Intervention designation"
+            label={<Icon color="blue" name="universal access" size="large" />}
+            placeholder="select designation"
+            options={VALID_DESIGNATIONS}
           />
 
           <Button

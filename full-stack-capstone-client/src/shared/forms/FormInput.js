@@ -1,6 +1,24 @@
 import React from 'react';
 import { Controller } from 'react-hook-form';
-import { Form, Input, Label } from 'semantic-ui-react';
+import { Form, Input, Label, Select } from 'semantic-ui-react';
+
+// Valid enum values for student fields (must match server validation)
+export const VALID_DESIGNATIONS = [
+  { key: 'ell', value: 'ELL', text: 'ELL' },
+  { key: 'rfep', value: 'RFEP', text: 'RFEP' },
+  { key: 'ifep', value: 'IFEP', text: 'IFEP' },
+  { key: 'eo', value: 'EO', text: 'EO' },
+  { key: 'tbd', value: 'TBD', text: 'TBD' },
+];
+
+export const VALID_COMPOSITE_LEVELS = [
+  { key: 'beginning', value: 'Beginning', text: 'Beginning' },
+  { key: 'early-intermediate', value: 'Early Intermediate', text: 'Early Intermediate' },
+  { key: 'intermediate', value: 'Intermediate', text: 'Intermediate' },
+  { key: 'early-advanced', value: 'Early Advanced', text: 'Early Advanced' },
+  { key: 'advanced', value: 'Advanced', text: 'Advanced' },
+  { key: 'na', value: 'N/A', text: 'N/A' },
+];
 
 // Custom form input component that integrates React Hook Form with Semantic UI
 export const FormInput = ({
@@ -73,6 +91,48 @@ export const LabeledFormInput = ({
             placeholder={placeholder}
             type={type}
           />
+          {error && (
+            <Label pointing prompt>
+              {error.message}
+            </Label>
+          )}
+        </Form.Field>
+      )}
+    />
+  );
+};
+
+// Dropdown/Select component for enum fields
+export const LabeledFormSelect = ({
+  name,
+  control,
+  rules,
+  label,
+  placeholder,
+  options,
+  defaultValue = '',
+  ...selectProps
+}) => {
+  return (
+    <Controller
+      name={name}
+      control={control}
+      rules={rules}
+      defaultValue={defaultValue}
+      render={({ field: { onChange, value, ...field }, fieldState: { error } }) => (
+        <Form.Field error={!!error}>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            {label}
+            <Select
+              {...field}
+              {...selectProps}
+              placeholder={placeholder}
+              options={options}
+              value={value}
+              onChange={(e, { value: newValue }) => onChange(newValue)}
+              style={{ flex: 1, marginLeft: '8px' }}
+            />
+          </div>
           {error && (
             <Label pointing prompt>
               {error.message}

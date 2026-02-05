@@ -7,7 +7,12 @@ import { Form, Icon, Button, Grid, Message } from 'semantic-ui-react';
 import { createStudent } from '../studentsSlice';
 import { showModal, hideModal } from '../../modals';
 import { validationRules } from '../../../validators/hookFormValidators';
-import { LabeledFormInput } from '../../../shared';
+import {
+  LabeledFormInput,
+  LabeledFormSelect,
+  VALID_DESIGNATIONS,
+  VALID_COMPOSITE_LEVELS,
+} from '../../../shared';
 import { StyledForm } from './UpdateStudent';
 
 const CreateStudent = () => {
@@ -235,27 +240,21 @@ const CreateStudent = () => {
             />
           </Form.Group>
           <Form.Group>
-            <LabeledFormInput
+            <LabeledFormSelect
               control={control}
               name="compositeLevel"
-              label={{
-                content: <Icon color="green" name="chart line" size="large" />,
-              }}
-              labelPosition="left"
-              placeholder="enter WIDA ACCESS composite level (optional)"
+              label={<Icon color="green" name="chart line" size="large" />}
+              placeholder="select composite level (optional)"
+              options={VALID_COMPOSITE_LEVELS}
             />
           </Form.Group>
           <Form.Group>
-            <LabeledFormInput
+            <LabeledFormSelect
               control={control}
               name="designation"
-              label={{
-                content: (
-                  <Icon color="purple" name="file alternate" size="large" />
-                ),
-              }}
-              labelPosition="left"
-              placeholder="enter IEP/504/intervention plan (optional)"
+              label={<Icon color="purple" name="file alternate" size="large" />}
+              placeholder="select designation (optional)"
+              options={VALID_DESIGNATIONS}
             />
           </Form.Group>
           <Button

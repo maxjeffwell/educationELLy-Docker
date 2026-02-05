@@ -11,4 +11,10 @@ export { default as SEO } from './components/SEO';
 export { default as SessionManagerWrapper } from './components/SessionManagerWrapper';
 
 // Forms
-export { FormInput, LabeledFormInput } from './forms/FormInput';
+export {
+  FormInput,
+  LabeledFormInput,
+  LabeledFormSelect,
+  VALID_DESIGNATIONS,
+  VALID_COMPOSITE_LEVELS,
+} from './forms/FormInput';
