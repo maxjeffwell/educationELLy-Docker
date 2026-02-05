@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, screen, waitFor } from './test-utils';
-import UpdateStudent from '../components/UpdateStudent';
+import UpdateStudent from '../features/students/components/UpdateStudent';
+
 const mockStudent = {
   id: '123',
   fullName: 'John Doe',
@@ -20,7 +21,7 @@ jest.mock('react-router-dom', () => ({
 }));
 
 // Mock authRequired HOC to bypass authentication
-jest.mock('../components/authRequired', () => Component => Component);
+jest.mock('../features/auth/authRequired', () => Component => Component);
 
 describe('<UpdateStudent />', () => {
   it('Should render without crashing', () => {

@@ -6,7 +6,7 @@ import authReducer, {
   selectAuthUser,
   selectAuthError,
   selectAuthLoading,
-} from '../store/slices/authSlice';
+} from '../features/auth/authSlice';
 
 // Mock the auth service to avoid side effects
 jest.mock('../utils/auth', () => ({

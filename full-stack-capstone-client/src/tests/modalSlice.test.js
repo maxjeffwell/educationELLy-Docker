@@ -4,7 +4,7 @@ import modalReducer, {
   selectModal,
   selectModalType,
   selectModalProps,
-} from '../store/slices/modalSlice';
+} from '../features/modals/modalSlice';
 
 describe('modalSlice', () => {
   describe('reducer actions', () => {

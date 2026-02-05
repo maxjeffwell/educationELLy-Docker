@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from './test-utils';
-import Navigation from '../components/Navigation';
+import Navigation from '../features/dashboard/components/Navigation';
 
 describe('<Navigation />', () => {
   it('Should render without crashing', () => {

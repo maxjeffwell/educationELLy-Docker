@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen } from './test-utils';
-import Footer from '../components/Footer';
+import Footer from '../shared/components/Footer';
 
 describe('<Footer />', () => {
   it('Should render without crashing', () => {

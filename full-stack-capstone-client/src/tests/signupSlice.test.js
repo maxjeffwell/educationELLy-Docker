@@ -4,7 +4,7 @@ import signupReducer, {
   clearSignupError,
   selectSignupLoading,
   selectSignupError,
-} from '../store/slices/signupSlice';
+} from '../features/auth/signupSlice';
 
 describe('signupSlice', () => {
   const initialState = {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen } from './test-utils';
-import Sidebar from '../components/Sidebar';
+import Sidebar from '../features/dashboard/components/Sidebar';
 
 describe('<Sidebar />', () => {
   it('Should render without crashing', () => {

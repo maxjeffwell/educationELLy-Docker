@@ -5,12 +5,12 @@ import { BrowserRouter } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 import { configureStore } from '@reduxjs/toolkit';
 
-// Import all reducers
-import authReducer from '../store/slices/authSlice';
-import studentsReducer from '../store/slices/studentsSlice';
-import toggleReducer from '../store/slices/toggleSlice';
-import signupReducer from '../store/slices/signupSlice';
-import modalReducer from '../store/slices/modalSlice';
+// Import all reducers from feature directories
+import authReducer from '../features/auth/authSlice';
+import studentsReducer from '../features/students/studentsSlice';
+import toggleReducer from '../features/dashboard/toggleSlice';
+import signupReducer from '../features/auth/signupSlice';
+import modalReducer from '../features/modals/modalSlice';
 
 // Theme for styled-components
 const theme = {

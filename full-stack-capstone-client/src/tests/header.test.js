@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen } from './test-utils';
-import Header from '../components/Header';
+import Header from '../shared/components/Header';
 
 describe('<Header />', () => {
   it('Should render without crashing', () => {

@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, waitFor } from './test-utils';
 import userEvent from '@testing-library/user-event';
-import Register from '../components/auth/Register';
+import Register from '../features/auth/components/Register';
 
 // Mock navigate
 const mockNavigate = jest.fn();

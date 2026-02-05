@@ -7,7 +7,7 @@ import studentsReducer, {
   selectAllStudents,
   selectStudentById,
   selectStudentIds,
-} from '../store/slices/studentsSlice';
+} from '../features/students/studentsSlice';
 
 // Mock dependencies
 jest.mock('../utils/auth', () => ({
@@ -16,7 +16,7 @@ jest.mock('../utils/auth', () => ({
   clearTokens: jest.fn(),
 }));
 
-jest.mock('../store/slices/authSlice', () => ({
+jest.mock('../features/auth/authSlice', () => ({
   setError: jest.fn(msg => ({ type: 'auth/setError', payload: msg })),
 }));
 

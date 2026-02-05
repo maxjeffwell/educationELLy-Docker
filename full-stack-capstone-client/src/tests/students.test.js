@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, waitFor } from './test-utils';
 import axios from 'axios';
-import Students from '../components/auth/Students';
+import Students from '../features/students/components/StudentList';
 
 // Mock axios
 jest.mock('axios');

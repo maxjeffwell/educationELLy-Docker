@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen } from './test-utils';
-import Signout from '../components/auth/Signout';
+import Signout from '../features/auth/components/Signout';
 
 // Auth utils mock is provided in setupTests.js
 

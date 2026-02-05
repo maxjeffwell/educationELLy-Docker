@@ -4,7 +4,7 @@ import toggleReducer, {
   closeSidebar,
   openSidebar,
   selectIsSidebarToggled,
-} from '../store/slices/toggleSlice';
+} from '../features/dashboard/toggleSlice';
 
 describe('toggleSlice', () => {
   describe('reducer actions', () => {

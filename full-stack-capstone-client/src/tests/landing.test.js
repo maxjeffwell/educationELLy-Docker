@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen } from './test-utils';
-import Landing from '../components/Landing';
+import Landing from '../shared/components/Landing';
 
 describe('<Landing />', () => {
   it('Should render without crashing', () => {

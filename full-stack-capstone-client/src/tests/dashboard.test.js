@@ -1,9 +1,9 @@
 import React from 'react';
 import { render, screen } from './test-utils';
-import Dashboard from '../components/Dashboard';
+import Dashboard from '../features/dashboard/components/Dashboard';
 
 // Mock authRequired HOC to bypass authentication
-jest.mock('../components/authRequired', () => Component => Component);
+jest.mock('../features/auth/authRequired', () => Component => Component);
 
 describe('<Dashboard />', () => {
   it('Should render without crashing', () => {
