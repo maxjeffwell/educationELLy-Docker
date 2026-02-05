@@ -261,7 +261,12 @@ const CreateStudent = () => {
             type="submit"
             disabled={!isDirty || isSubmitting}
             loading={isSubmitting}
-            style={{ marginTop: '20px', display: 'block', marginLeft: 'auto', marginRight: 'auto' }}
+            style={{
+              marginTop: '20px',
+              display: 'block',
+              marginLeft: 'auto',
+              marginRight: 'auto',
+            }}
           >
             Save Student
           </Button>
