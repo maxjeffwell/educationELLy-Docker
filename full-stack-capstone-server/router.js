@@ -9,6 +9,7 @@ import {
   flashcardValidation,
   quizValidation,
   chatValidation,
+  validatePaginationParams,
   validValues,
 } from './middleware/validation.js';
 import {
@@ -88,27 +89,65 @@ const Router = (app) => { // Inside this function we have access to our Express 
     });
   });
 
-  app.get('/api/students', requireAuth, async (req, res) => {
-    const timings = [];
-    const requestStart = performance.now();
+  app.get(
+    '/api/students',
+    requireAuth,
+    validatePaginationParams,
+    async (req, res) => {
+      const timings = [];
+      const requestStart = performance.now();
 
-    try {
-      const dbStart = performance.now();
-      const result = await Student.find({});
-      const dbDuration = performance.now() - dbStart;
-      timings.push(`db;dur=${dbDuration.toFixed(2)};desc="MongoDB query"`);
+      try {
+        // Parse pagination params with defaults
+        const page = Math.max(1, parseInt(req.query.page, 10) || 1);
+        const limit = Math.min(
+          100,
+          Math.max(1, parseInt(req.query.limit, 10) || 25)
+        );
+        const sort = req.query.sort || 'fullName';
+        const order = req.query.order === 'desc' ? -1 : 1;
+        const skip = (page - 1) * limit;
 
-      const total = performance.now() - requestStart;
-      timings.push(`total;dur=${total.toFixed(2)}`);
+        const dbStart = performance.now();
 
-      res.set('Server-Timing', timings.join(', '));
-      res.set('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300');
-      res.set('CDN-Cache-Control', 'max-age=60');
-      res.json(result);
-    } catch (err) {
-      handleServerError(res, err, 'Failed to retrieve students');
+        // Run data query and count in parallel for efficiency
+        const [students, total] = await Promise.all([
+          Student.find({})
+            .sort({ [sort]: order })
+            .skip(skip)
+            .limit(limit),
+          Student.countDocuments({}),
+        ]);
+
+        const dbDuration = performance.now() - dbStart;
+        timings.push(`db;dur=${dbDuration.toFixed(2)};desc="MongoDB query"`);
+
+        const totalTime = performance.now() - requestStart;
+        timings.push(`total;dur=${totalTime.toFixed(2)}`);
+
+        res.set('Server-Timing', timings.join(', '));
+        res.set(
+          'Cache-Control',
+          'public, s-maxage=60, stale-while-revalidate=300'
+        );
+        res.set('CDN-Cache-Control', 'max-age=60');
+
+        res.json({
+          data: students,
+          pagination: {
+            page,
+            limit,
+            total,
+            totalPages: Math.ceil(total / limit),
+            hasNext: page * limit < total,
+            hasPrev: page > 1,
+          },
+        });
+      } catch (err) {
+        handleServerError(res, err, 'Failed to retrieve students');
+      }
     }
-  });
+  );
 
   app.get('/api/students/:id', requireAuth, mongoIdValidation, handleValidationErrors, (req, res) => {
     Student.findById(req.params.id)

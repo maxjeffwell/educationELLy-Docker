@@ -19,12 +19,23 @@ const initialState = studentsAdapter.getInitialState({
   loading: false,
   error: null,
   selectedStudent: null,
+  pagination: {
+    page: 1,
+    limit: 25,
+    total: 0,
+    totalPages: 0,
+    hasNext: false,
+    hasPrev: false,
+  },
 });
 
 // Async thunks
 export const fetchStudents = createAsyncThunk(
   'students/fetchAll',
-  async (_, { dispatch, getState, rejectWithValue }) => {
+  async (
+    { page = 1, limit = 25, sort = 'fullName', order = 'asc' } = {},
+    { dispatch, getState, rejectWithValue }
+  ) => {
     // Check both authService and Redux state
     const token = authService.getToken();
     const reduxAuth = getState().auth.authenticated;
@@ -36,9 +47,14 @@ export const fetchStudents = createAsyncThunk(
     }
 
     try {
-      // Add cache-busting parameter to bypass CDN cache
       const response = await axios.get(`${API_BASE_URL}/students`, {
-        params: { _t: Date.now() },
+        params: {
+          page,
+          limit,
+          sort,
+          order,
+          _t: Date.now(), // Cache-busting
+        },
       });
       return response.data;
     } catch (error) {
@@ -183,7 +199,10 @@ const studentsSlice = createSlice({
       })
       .addCase(fetchStudents.fulfilled, (state, action) => {
         state.loading = false;
-        studentsAdapter.setAll(state, action.payload);
+        // Handle paginated response: { data: [...], pagination: {...} }
+        const { data, pagination } = action.payload;
+        studentsAdapter.setAll(state, data);
+        state.pagination = pagination;
       })
       .addCase(fetchStudents.rejected, (state, action) => {
         state.loading = false;
@@ -261,3 +280,11 @@ export const {
 export const selectStudentsLoading = state => state.students.loading;
 export const selectStudentsError = state => state.students.error;
 export const selectSelectedStudent = state => state.students.selectedStudent;
+
+// Pagination selectors
+export const selectPagination = state => state.students.pagination;
+export const selectCurrentPage = state => state.students.pagination.page;
+export const selectTotalPages = state => state.students.pagination.totalPages;
+export const selectTotalStudents = state => state.students.pagination.total;
+export const selectHasNextPage = state => state.students.pagination.hasNext;
+export const selectHasPrevPage = state => state.students.pagination.hasPrev;

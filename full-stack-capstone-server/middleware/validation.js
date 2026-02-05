@@ -305,6 +305,88 @@ export const chatValidation = [
 ];
 
 // =============================================================================
+// Pagination validation
+// =============================================================================
+
+const ALLOWED_SORT_FIELDS = [
+  'fullName',
+  'ellStatus',
+  'gradeLevel',
+  'teacher',
+  'school',
+  'active',
+  'createdAt',
+];
+
+/**
+ * Middleware to validate pagination query parameters
+ * Validates: page, limit, sort, order
+ */
+export const validatePaginationParams = (req, res, next) => {
+  const { page, limit, sort, order } = req.query;
+
+  // Validate sort field if provided
+  if (sort && !ALLOWED_SORT_FIELDS.includes(sort)) {
+    return res.status(400).json({
+      error: 'Validation failed',
+      details: [
+        {
+          field: 'sort',
+          message: `Invalid sort field. Allowed: ${ALLOWED_SORT_FIELDS.join(', ')}`,
+        },
+      ],
+    });
+  }
+
+  // Validate order if provided
+  if (order && !['asc', 'desc'].includes(order.toLowerCase())) {
+    return res.status(400).json({
+      error: 'Validation failed',
+      details: [
+        {
+          field: 'order',
+          message: 'Order must be "asc" or "desc"',
+        },
+      ],
+    });
+  }
+
+  // Validate page is a positive integer if provided
+  if (page !== undefined) {
+    const pageNum = parseInt(page, 10);
+    if (isNaN(pageNum) || pageNum < 1) {
+      return res.status(400).json({
+        error: 'Validation failed',
+        details: [
+          {
+            field: 'page',
+            message: 'Page must be a positive integer',
+          },
+        ],
+      });
+    }
+  }
+
+  // Validate limit is within bounds if provided
+  if (limit !== undefined) {
+    const limitNum = parseInt(limit, 10);
+    if (isNaN(limitNum) || limitNum < 1 || limitNum > 100) {
+      return res.status(400).json({
+        error: 'Validation failed',
+        details: [
+          {
+            field: 'limit',
+            message: 'Limit must be between 1 and 100',
+          },
+        ],
+      });
+    }
+  }
+
+  return next();
+};
+
+// =============================================================================
 // Export valid values for use in other modules (e.g., frontend)
 // =============================================================================
 
@@ -315,4 +397,5 @@ export const validValues = {
   genders: VALID_GENDERS,
   difficulties: VALID_DIFFICULTIES,
   userRoles: VALID_USER_ROLES,
+  sortFields: ALLOWED_SORT_FIELDS,
 };

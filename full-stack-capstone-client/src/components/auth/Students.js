@@ -1,4 +1,4 @@
-import React, { useEffect, memo, useMemo } from 'react';
+import React, { useEffect, useState, memo, useMemo, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Card, Header } from 'semantic-ui-react';
@@ -8,8 +8,10 @@ import {
   fetchStudents,
   selectAllStudents,
   selectStudentsLoading,
+  selectPagination,
 } from '../../store/slices/studentsSlice';
 import LoadingSpinner from '../LoadingSpinner';
+import Pagination from '../Pagination';
 
 const StyledCard = styled(Card)`
   &&& .ui.card.student-card {
@@ -103,9 +105,14 @@ const Students = memo(() => {
   const students = useSelector(selectAllStudents);
   const loading = useSelector(selectStudentsLoading);
   const error = useSelector(state => state.students.error);
+  const pagination = useSelector(selectPagination);
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 25;
+
+  // Fetch students when page changes
   useEffect(() => {
-    dispatch(fetchStudents())
+    dispatch(fetchStudents({ page: currentPage, limit: itemsPerPage }))
       .unwrap()
       .then(() => {
         // Students fetched successfully
@@ -117,7 +124,14 @@ const Students = memo(() => {
           // Authentication failed - token may be expired
         }
       });
-  }, [dispatch]);
+  }, [dispatch, currentPage]);
+
+  // Handle page change
+  const handlePageChange = useCallback(newPage => {
+    setCurrentPage(newPage);
+    // Scroll to top when page changes
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
 
   // Memoize the students list to prevent recalculation on every render
   const studentsList = useMemo(() => {
@@ -158,7 +172,13 @@ const Students = memo(() => {
             </Link>
           </>
         ) : (
-          <StyledButton onClick={() => dispatch(fetchStudents())}>
+          <StyledButton
+            onClick={() =>
+              dispatch(
+                fetchStudents({ page: currentPage, limit: itemsPerPage })
+              )
+            }
+          >
             Retry
           </StyledButton>
         )}
@@ -180,7 +200,7 @@ const Students = memo(() => {
 
   return (
     <div style={{ paddingBottom: '100px' }}>
-      <Header as="h3">Student List ({studentsList.length} students)</Header>
+      <Header as="h3">Student List ({pagination.total} students)</Header>
       <p>
         This Student List contains the most current information about each
         student.
@@ -188,6 +208,14 @@ const Students = memo(() => {
       <Card.Group itemsPerRow={3} stackable>
         {renderedStudents}
       </Card.Group>
+      <Pagination
+        currentPage={currentPage}
+        totalPages={pagination.totalPages}
+        totalItems={pagination.total}
+        itemsPerPage={itemsPerPage}
+        onPageChange={handlePageChange}
+        loading={loading}
+      />
     </div>
   );
 });
