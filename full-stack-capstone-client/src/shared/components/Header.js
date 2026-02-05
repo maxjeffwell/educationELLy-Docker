@@ -83,6 +83,13 @@ const CustomNavContainer = styled.div`
     }
   }
 
+  @media (max-width: 990px) {
+    .nav-item {
+      font-size: 0.95em;
+      padding: 0.35em 0.25em;
+    }
+  }
+
   @media (max-width: 900px) {
     .nav-item {
       font-size: 0.9em;
@@ -90,17 +97,41 @@ const CustomNavContainer = styled.div`
     }
   }
 
-  @media (max-width: 820px) {
+  @media (max-width: 850px) {
     .nav-item {
-      font-size: 0.8em;
+      font-size: 0.85em;
       padding: 0.25em 0.15em;
     }
   }
 
-  @media (max-width: 790px) {
+  @media (max-width: 820px) {
     .nav-item {
-      font-size: 0.75em;
+      font-size: 0.8em;
       padding: 0.2em 0.1em;
+    }
+  }
+
+  @media (max-width: 790px) {
+    flex-direction: column;
+
+    .logo-section {
+      padding: 1em;
+    }
+
+    .nav-section {
+      flex-direction: column;
+      width: 100%;
+      padding-right: 0;
+    }
+
+    .nav-item {
+      font-size: 0.9em;
+      padding: 0.4em 0.3em;
+      width: 100%;
+      justify-content: center;
+      white-space: normal;
+      text-align: center;
+      line-height: 1.2;
     }
   }
 

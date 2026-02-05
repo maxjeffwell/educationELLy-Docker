@@ -31,8 +31,9 @@ export const VALID_COMPOSITE_LEVELS = [
 
 // Styled wrapper for select to match labeled inputs
 const SelectWrapper = styled.div`
-  display: flex;
+  display: inline-flex;
   align-items: stretch;
+  max-width: 100%;
 
   .icon-label {
     display: flex;
@@ -49,22 +50,32 @@ const SelectWrapper = styled.div`
   }
 
   select {
-    flex: 1;
+    width: 232px;
+    max-width: calc(100% - 50px);
     font-family: 'Roboto', sans-serif;
-    font-size: 2em;
-    font-weight: 700;
-    color: #2185d0;
-    background-color: white;
-    border: 2px solid #21ba45;
+    font-size: 1.2em;
+    font-weight: 400;
+    color: rgba(191, 191, 191, 1);
+    background-color: #f9fafb;
+    border-top: 2px solid #21ba45;
+    border-right: 2px solid #21ba45;
+    border-bottom: 2px solid #21ba45;
     border-left: none;
     border-radius: 0;
     border-top-right-radius: 5px;
     border-bottom-right-radius: 5px;
-    padding: 5px 10px;
+    padding: 10px;
     cursor: pointer;
-    appearance: menulist;
-    -webkit-appearance: menulist;
-    -moz-appearance: menulist;
+    height: 48px;
+    box-sizing: border-box;
+  }
+
+  select.has-value {
+    color: #2185d0;
+    font-weight: 700;
+    font-size: 2em;
+    background-color: #f9fafb;
+    padding: 5px 10px;
   }
 
   select:focus {
@@ -74,9 +85,10 @@ const SelectWrapper = styled.div`
 
   select option {
     font-family: 'Roboto', sans-serif;
-    font-size: 0.5em;
-    font-weight: 600;
-    color: #2185d0;
+    font-size: 14px;
+    font-weight: 400;
+    color: #333;
+    background-color: white;
   }
 `;
 
@@ -190,6 +202,7 @@ export const LabeledFormSelect = ({
               value={value || ''}
               onChange={e => onChange(e.target.value)}
               onBlur={onBlur}
+              className={value ? 'has-value' : ''}
             >
               <option value="" disabled>
                 {placeholder}
