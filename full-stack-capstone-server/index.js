@@ -82,8 +82,9 @@ app.use((req, res, next) => {
   next();
 });
 
-// Trust proxy for K8s ingress
-app.set('trust proxy', true);
+// Trust proxy for K8s ingress - use 1 to trust only the first proxy (Traefik)
+// Using 'true' allows IP spoofing which breaks rate limiting
+app.set('trust proxy', 1);
 
 // Database connection with pooling configuration
 if (process.env.NODE_ENV !== 'test') {
