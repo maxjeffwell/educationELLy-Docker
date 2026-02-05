@@ -83,31 +83,36 @@ const CustomNavContainer = styled.div`
     }
   }
 
-  @media (max-width: 990px) {
+  @media (max-width: 991px) {
+    .nav-section {
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
     .nav-item {
-      font-size: 0.95em;
-      padding: 0.35em 0.25em;
+      font-size: 0.9em;
+      padding: 0.35em 0.3em;
     }
   }
 
   @media (max-width: 900px) {
     .nav-item {
-      font-size: 0.9em;
-      padding: 0.3em 0.2em;
+      font-size: 0.85em;
+      padding: 0.3em 0.25em;
     }
   }
 
   @media (max-width: 850px) {
     .nav-item {
-      font-size: 0.85em;
-      padding: 0.25em 0.15em;
+      font-size: 0.8em;
+      padding: 0.25em 0.2em;
     }
   }
 
   @media (max-width: 820px) {
     .nav-item {
-      font-size: 0.8em;
-      padding: 0.2em 0.1em;
+      font-size: 0.75em;
+      padding: 0.2em 0.15em;
     }
   }
 
