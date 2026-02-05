@@ -16,7 +16,9 @@ describe('<Navigation />', () => {
 
   it('Should have link to students page', () => {
     render(<Navigation />);
-    const link = screen.getByRole('button', { name: /students/i });
+    // The link contains an image with alt="students"
+    const image = screen.getByAltText('students');
+    const link = image.closest('a');
     expect(link).toHaveAttribute('href', '/students');
   });
 

@@ -5,24 +5,24 @@ import Footer from '../components/Footer';
 describe('<Footer />', () => {
   it('Should render without crashing', () => {
     render(<Footer />);
-    expect(screen.getByRole('contentinfo')).toBeInTheDocument();
+    expect(screen.getByText(/Copyright/i)).toBeInTheDocument();
   });
 
   it('Should display copyright information', () => {
     render(<Footer />);
-    expect(screen.getByText(/© \d{4}/)).toBeInTheDocument();
+    const currentYear = new Date().getFullYear();
+    expect(screen.getByText(new RegExp(`© ${currentYear}`))).toBeInTheDocument();
   });
 
-  it('Should display developer name', () => {
+  it('Should display app name', () => {
     render(<Footer />);
-    expect(screen.getByText(/Jeff Maxwell/i)).toBeInTheDocument();
+    expect(screen.getByText(/educationELLy/i)).toBeInTheDocument();
   });
 
-  it('Should have proper semantic HTML', () => {
-    render(<Footer />);
-
-    const footer = screen.getByRole('contentinfo');
-    expect(footer).toBeInTheDocument();
-    expect(footer).toHaveClass('footer');
+  it('Should render as fixed footer', () => {
+    const { container } = render(<Footer />);
+    const footer = container.firstChild;
+    expect(footer).toHaveStyle('position: fixed');
+    expect(footer).toHaveStyle('bottom: 0');
   });
 });

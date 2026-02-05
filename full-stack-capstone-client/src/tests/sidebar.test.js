@@ -5,31 +5,25 @@ import Sidebar from '../components/Sidebar';
 describe('<Sidebar />', () => {
   it('Should render without crashing', () => {
     render(<Sidebar />);
-    const sidebar = document.querySelector('.ui.sidebar');
+    const sidebar = screen.getByTestId('sidebar');
     expect(sidebar).toBeInTheDocument();
   });
 
-  it('Should be visible when toggled', () => {
-    const toggledState = {
-      isSidebarToggled: true,
-    };
-
-    render(<Sidebar />, { preloadedState: toggledState });
-    const sidebar = screen.getByTestId('sidebar');
-    expect(sidebar).toHaveClass('visible');
-  });
-
-  it('Should not be visible when not toggled', () => {
+  it('Should render as a grid container', () => {
     render(<Sidebar />);
     const sidebar = screen.getByTestId('sidebar');
-    expect(sidebar).not.toHaveClass('visible');
+    expect(sidebar).toHaveClass('ui', 'grid', 'container');
   });
 
-  it('Should contain navigation menu items', () => {
+  it('Should be centered', () => {
     render(<Sidebar />);
+    const sidebar = screen.getByTestId('sidebar');
+    expect(sidebar).toHaveClass('centered');
+  });
 
-    // Check for menu items (assuming sidebar has navigation links)
-    const sidebar = document.querySelector('.ui.sidebar');
-    expect(sidebar.querySelector('.menu')).toBeInTheDocument();
+  it('Should have single column layout', () => {
+    render(<Sidebar />);
+    const sidebar = screen.getByTestId('sidebar');
+    expect(sidebar).toHaveClass('one', 'column');
   });
 });
