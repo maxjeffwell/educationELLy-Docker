@@ -34,7 +34,7 @@ export const StyledForm = styled(Form)`
     size: 100px;
   }
   }
-  &&& .ui.labeled.input:not([class*="corner labeled"]) 
+  &&& .ui.labeled.input:not([class*="corner labeled"])
   .label:first-child+input {
     font-family: 'Roboto', 'sans-serif';
     font-size: 2em;
@@ -46,6 +46,33 @@ export const StyledForm = styled(Form)`
     border-right: 2px solid ${props => props.theme.green};
     border-bottom: 2px solid ${props => props.theme.green};
     margin-right: auto;
+  }
+  &&& .ui.labeled.input:not([class*="corner labeled"])
+  .label:first-child+.ui.dropdown {
+    font-family: 'Roboto', 'sans-serif';
+    font-size: 2em;
+    font-weight: 700;
+    color: ${props => props.theme.blue};
+    padding: 5px 5px 5px 10px;
+    background-color: ${props => props.theme.white};
+    border-top: 2px solid ${props => props.theme.green};
+    border-right: 2px solid ${props => props.theme.green};
+    border-bottom: 2px solid ${props => props.theme.green};
+    border-left: none;
+    border-radius: 0;
+    flex: 1;
+    min-height: auto;
+  }
+  &&& .ui.labeled.input .ui.dropdown .text {
+    font-family: 'Roboto', 'sans-serif';
+    font-size: 1em;
+    font-weight: 700;
+    color: ${props => props.theme.blue};
+  }
+  &&& .ui.labeled.input .ui.dropdown .menu .item {
+    font-family: 'Roboto', 'sans-serif';
+    font-size: 0.8em;
+    font-weight: 600;
   }
   &&& .ui.label {
     border: 2px solid ${props => props.theme.orange};

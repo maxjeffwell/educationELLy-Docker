@@ -1,6 +1,6 @@
 import React from 'react';
 import { Controller } from 'react-hook-form';
-import { Form, Input, Label, Select } from 'semantic-ui-react';
+import { Form, Input, Label, Dropdown } from 'semantic-ui-react';
 
 // Valid enum values for student fields (must match server validation)
 export const VALID_DESIGNATIONS = [
@@ -119,7 +119,6 @@ export const LabeledFormSelect = ({
   placeholder,
   options,
   defaultValue = '',
-  ...selectProps
 }) => {
   return (
     <Controller
@@ -128,30 +127,23 @@ export const LabeledFormSelect = ({
       rules={rules}
       defaultValue={defaultValue}
       render={({
-        field: { onChange, value, ...field },
+        field: { onChange, value, onBlur },
         fieldState: { error },
       }) => (
         <Form.Field error={!!error}>
-          <Input
-            label={label}
-            labelPosition="left"
-            input={
-              <Select
-                {...field}
-                {...selectProps}
-                placeholder={placeholder}
-                options={options}
-                value={value}
-                onChange={(e, { value: newValue }) => onChange(newValue)}
-                fluid
-                style={{
-                  borderTopLeftRadius: 0,
-                  borderBottomLeftRadius: 0,
-                  minWidth: '200px',
-                }}
-              />
-            }
-          />
+          <div className="ui left labeled input">
+            <Label>{label}</Label>
+            <Dropdown
+              selection
+              fluid
+              placeholder={placeholder}
+              options={options}
+              value={value}
+              onChange={(e, { value: newValue }) => onChange(newValue)}
+              onBlur={onBlur}
+              className="labeled-dropdown"
+            />
+          </div>
           {error && (
             <Label pointing prompt>
               {error.message}
