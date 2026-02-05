@@ -1,7 +1,6 @@
 import React from 'react';
 import { Controller } from 'react-hook-form';
 import { Form, Input, Label, Dropdown } from 'semantic-ui-react';
-import styled from 'styled-components';
 
 // Valid enum values for student fields (must match server validation)
 export const VALID_DESIGNATIONS = [
@@ -37,7 +36,6 @@ export const VALID_COMPOSITE_LEVELS = [
   { key: 'advanced', value: 'Advanced', text: 'Advanced' },
   { key: 'na', value: 'N/A', text: 'N/A' },
 ];
-
 
 // Custom form input component that integrates React Hook Form with Semantic UI
 export const FormInput = ({
