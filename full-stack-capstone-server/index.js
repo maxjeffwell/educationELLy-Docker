@@ -7,11 +7,22 @@ import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
-import mongoose from 'mongoose';
 import client from 'prom-client';
 import Router from './router.js';
 import validateEnvironment from './utils/envValidation.js';
 import { initSentry, sentryErrorHandler } from './utils/sentry.js';
+import {
+  connectToDatabase,
+  disconnectFromDatabase,
+  getDatabaseStatus,
+  getConnectionOptions,
+} from './config/database.js';
+import {
+  initDatabaseMetrics,
+  updateConnectionState,
+  recordConnectionError,
+  updatePoolMetrics,
+} from './utils/dbMetrics.js';
 
 import './services/passport.js';
 import './models/student.js';
@@ -48,8 +59,11 @@ const httpRequestDuration = new client.Histogram({
   help: 'Duration of HTTP requests in seconds',
   labelNames: ['method', 'route', 'status'],
   buckets: [0.001, 0.005, 0.015, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 1, 2, 5],
-  registers: [register]
+  registers: [register],
 });
+
+// Initialize database metrics
+initDatabaseMetrics(register);
 
 // Metrics middleware (before other middleware)
 app.use((req, res, next) => {
@@ -68,9 +82,22 @@ app.use((req, res, next) => {
 // Trust proxy for K8s ingress
 app.set('trust proxy', true);
 
+// Database connection with pooling configuration
 if (process.env.NODE_ENV !== 'test') {
-  mongoose.Promise = global.Promise;
-  mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/local');
+  const dbOpts = getConnectionOptions();
+  updatePoolMetrics(dbOpts.maxPoolSize, dbOpts.minPoolSize);
+
+  connectToDatabase({
+    onConnected: () => updateConnectionState(true),
+    onDisconnected: () => updateConnectionState(false),
+    onError: (err) => {
+      recordConnectionError(err.name || 'unknown');
+      updateConnectionState(false);
+    },
+    onReconnected: () => updateConnectionState(true),
+  }).catch((err) => {
+    console.error('Database connection failed:', err.message);
+  });
 }
 
 // App setup to get Express working
@@ -81,9 +108,34 @@ app.use(morgan('dev'));
 app.use(bodyParser.json({ limit: '10mb' }));
 app.use(cookieParser());
 
-// Health check endpoint - placed BEFORE rate limiter to avoid 429 errors on K8s probes
+// Health check endpoints - placed BEFORE rate limiter to avoid 429 errors on K8s probes
+// Liveness probe - is the process alive?
 app.get('/health', (req, res) => {
   res.status(200).json({ status: 'healthy', timestamp: new Date().toISOString() });
+});
+
+// Readiness probe - is the service ready to accept traffic?
+app.get('/health/ready', (req, res) => {
+  if (process.env.NODE_ENV === 'test') {
+    return res
+      .status(200)
+      .json({ status: 'ready', timestamp: new Date().toISOString() });
+  }
+
+  const dbStatus = getDatabaseStatus();
+  const isReady = dbStatus.state === 'connected';
+
+  res.status(isReady ? 200 : 503).json({
+    status: isReady ? 'ready' : 'not_ready',
+    timestamp: new Date().toISOString(),
+    checks: {
+      database: {
+        status: dbStatus.state,
+        host: dbStatus.host,
+        name: dbStatus.name,
+      },
+    },
+  });
 });
 
 // Prometheus metrics endpoint
@@ -155,5 +207,57 @@ const server = http.createServer(app);
 
 server.listen(PORT);
 console.log('Server listening on:', PORT);
+
+// Graceful shutdown handling
+let isShuttingDown = false;
+
+async function gracefulShutdown(signal) {
+  if (isShuttingDown) {
+    console.log('Shutdown already in progress...');
+    return;
+  }
+
+  isShuttingDown = true;
+  console.log(`\n${signal} received. Starting graceful shutdown...`);
+
+  // Stop accepting new connections
+  server.close(async (err) => {
+    if (err) {
+      console.error('Error closing HTTP server:', err);
+    } else {
+      console.log('HTTP server closed');
+    }
+
+    // Close database connections
+    try {
+      await disconnectFromDatabase();
+    } catch (dbErr) {
+      console.error('Error closing database connection:', dbErr);
+    }
+
+    console.log('Graceful shutdown complete');
+    process.exit(err ? 1 : 0);
+  });
+
+  // Force shutdown after timeout (30 seconds)
+  setTimeout(() => {
+    console.error('Forced shutdown due to timeout');
+    process.exit(1);
+  }, 30000);
+}
+
+// Handle shutdown signals
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+
+// Handle uncaught errors
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+});
+
+process.on('uncaughtException', (error) => {
+  console.error('Uncaught Exception:', error);
+  gracefulShutdown('uncaughtException');
+});
 
 export default app;
