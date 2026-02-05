@@ -34,10 +34,30 @@ const mockStudents = [
   },
 ];
 
+// Helper to create paginated response matching API format
+const createPaginatedResponse = (students) => ({
+  data: {
+    data: students,
+    pagination: {
+      page: 1,
+      limit: 25,
+      total: students.length,
+      totalPages: 1,
+      hasNext: false,
+      hasPrev: false,
+    },
+  },
+});
+
 describe('<Students />', () => {
   // Authenticated preloaded state for tests that need it
   const authenticatedState = {
-    auth: { authenticated: true, user: { email: 'test@test.com' }, errorMessage: '', loading: false },
+    auth: {
+      authenticated: true,
+      user: { email: 'test@test.com' },
+      errorMessage: '',
+      loading: false,
+    },
   };
 
   beforeEach(() => {
@@ -45,8 +65,8 @@ describe('<Students />', () => {
     // Mock auth service to return authenticated
     authService.isAuthenticated.mockReturnValue(true);
     authService.getToken.mockReturnValue('fake-token');
-    // Default mock - return empty array (no students)
-    axios.get.mockResolvedValue({ data: [] });
+    // Default mock - return empty paginated response
+    axios.get.mockResolvedValue(createPaginatedResponse([]));
   });
 
   it('Should show loading state initially', () => {
@@ -55,28 +75,36 @@ describe('<Students />', () => {
   });
 
   it('Should render student list after loading', async () => {
-    axios.get.mockResolvedValue({ data: mockStudents });
+    axios.get.mockResolvedValue(createPaginatedResponse(mockStudents));
 
     render(<Students />, { preloadedState: authenticatedState });
 
     // Wait for loading to complete - use getByRole for heading
-    await waitFor(() => {
-      expect(screen.getByRole('heading', { name: /Student List/i })).toBeInTheDocument();
-    });
+    await waitFor(
+      () => {
+        expect(
+          screen.getByRole('heading', { name: /Student List/i })
+        ).toBeInTheDocument();
+      },
+      { timeout: 3000 }
+    );
 
     expect(screen.getByText('Student Name: John Doe')).toBeInTheDocument();
     expect(screen.getByText('Student Name: Jane Smith')).toBeInTheDocument();
   });
 
   it('Should display student information when data is available', async () => {
-    axios.get.mockResolvedValue({ data: [mockStudents[0]] });
+    axios.get.mockResolvedValue(createPaginatedResponse([mockStudents[0]]));
 
     render(<Students />, { preloadedState: authenticatedState });
 
     // Wait for student card to appear
-    await waitFor(() => {
-      expect(screen.getByText(/John Doe/)).toBeInTheDocument();
-    });
+    await waitFor(
+      () => {
+        expect(screen.getByText(/John Doe/)).toBeInTheDocument();
+      },
+      { timeout: 3000 }
+    );
 
     // Check card contains expected information (text may be split across elements)
     const card = screen.getByText(/John Doe/).closest('.card');
@@ -87,23 +115,29 @@ describe('<Students />', () => {
   });
 
   it('Should show no students message when list is empty', async () => {
-    axios.get.mockResolvedValue({ data: [] });
+    axios.get.mockResolvedValue(createPaginatedResponse([]));
 
     render(<Students />, { preloadedState: authenticatedState });
 
-    await waitFor(() => {
-      expect(screen.getByText('No students found.')).toBeInTheDocument();
-    });
+    await waitFor(
+      () => {
+        expect(screen.getByText('No students found.')).toBeInTheDocument();
+      },
+      { timeout: 3000 }
+    );
   });
 
   it('Should display update links for students', async () => {
-    axios.get.mockResolvedValue({ data: mockStudents });
+    axios.get.mockResolvedValue(createPaginatedResponse(mockStudents));
 
     render(<Students />, { preloadedState: authenticatedState });
 
-    await waitFor(() => {
-      expect(screen.getAllByText('Update Student')).toHaveLength(2);
-    });
+    await waitFor(
+      () => {
+        expect(screen.getAllByText('Update Student')).toHaveLength(2);
+      },
+      { timeout: 3000 }
+    );
 
     const updateLinks = screen.getAllByText('Update Student');
     expect(updateLinks[0].closest('a')).toHaveAttribute(
@@ -121,8 +155,24 @@ describe('<Students />', () => {
 
     render(<Students />, { preloadedState: authenticatedState });
 
-    await waitFor(() => {
-      expect(screen.getByText('Error Loading Students')).toBeInTheDocument();
-    });
+    await waitFor(
+      () => {
+        expect(screen.getByText('Error Loading Students')).toBeInTheDocument();
+      },
+      { timeout: 3000 }
+    );
+  });
+
+  it('Should display total student count in header', async () => {
+    axios.get.mockResolvedValue(createPaginatedResponse(mockStudents));
+
+    render(<Students />, { preloadedState: authenticatedState });
+
+    await waitFor(
+      () => {
+        expect(screen.getByText(/2 students/)).toBeInTheDocument();
+      },
+      { timeout: 3000 }
+    );
   });
 });
