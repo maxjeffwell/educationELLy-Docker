@@ -64,19 +64,19 @@ export const StyledForm = styled(Form)`
 
   /* Select dropdown styling - match text inputs exactly */
   &&& select {
-    font-family: 'Roboto', 'sans-serif';
-    font-size: 2em;
-    font-weight: 700;
-    color: rgba(191, 191, 191, 0.87);
-    padding: 5px 5px 5px 10px;
-    background-color: ${props => props.theme.white};
-    border-top: 2px solid ${props => props.theme.green};
-    border-right: 2px solid ${props => props.theme.green};
-    border-bottom: 2px solid ${props => props.theme.green};
-    border-left: none;
-    border-radius: 0;
-    border-top-right-radius: 5px;
-    border-bottom-right-radius: 5px;
+    font-family: 'Roboto', 'sans-serif' !important;
+    font-size: 2em !important;
+    font-weight: 700 !important;
+    color: rgba(191, 191, 191, 0.87) !important;
+    padding: 5px 5px 5px 10px !important;
+    background-color: ${props => props.theme.white} !important;
+    border-top: 2px solid ${props => props.theme.green} !important;
+    border-right: 2px solid ${props => props.theme.green} !important;
+    border-bottom: 2px solid ${props => props.theme.green} !important;
+    border-left: none !important;
+    border-radius: 0 !important;
+    border-top-right-radius: 5px !important;
+    border-bottom-right-radius: 5px !important;
     margin-right: auto;
     cursor: pointer;
     -webkit-appearance: none;
@@ -85,7 +85,12 @@ export const StyledForm = styled(Form)`
   }
 
   &&& select.has-value {
-    color: ${props => props.theme.blue};
+    color: ${props => props.theme.blue} !important;
+  }
+
+  /* Override error state background for selects */
+  &&& .field.error select {
+    background-color: ${props => props.theme.white} !important;
   }
 
   /* Select icon label - match input labels */
@@ -95,19 +100,20 @@ export const StyledForm = styled(Form)`
     justify-content: center;
     width: 50px;
     min-width: 50px;
-    border: 2px solid ${props => props.theme.orange};
+    border: 2px solid ${props => props.theme.orange} !important;
     border-radius: 5px;
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
     border-right: none;
-    background: ${props => props.theme.white};
+    background: ${props => props.theme.white} !important;
   }
 
   /* Error label positioning for selects */
   &&& .ui.pointing.prompt.label {
-    display: block;
-    margin-top: 0.5em;
-    margin-left: 50px;
+    display: block !important;
+    margin-top: 0.5em !important;
+    margin-left: 50px !important;
+    width: auto !important;
   }
 `;
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Controller } from 'react-hook-form';
-import { Form, Input, Label } from 'semantic-ui-react';
+import { Form, Input, Label, Dropdown } from 'semantic-ui-react';
 import styled from 'styled-components';
 
 // Valid enum values for student fields (must match server validation)
@@ -38,34 +38,6 @@ export const VALID_COMPOSITE_LEVELS = [
   { key: 'na', value: 'N/A', text: 'N/A' },
 ];
 
-// Styled wrapper for select - basic layout only, styling comes from parent StyledForm
-const SelectWrapper = styled.div`
-  display: flex;
-  align-items: stretch;
-
-  select {
-    flex: 1;
-  }
-
-  select:focus {
-    outline: none;
-  }
-
-  select option {
-    font-family: 'Roboto', sans-serif;
-    font-size: 14px;
-    font-weight: 400;
-    color: #333;
-    background-color: white;
-  }
-`;
-
-// Wrapper for select field layout
-const SelectFieldWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-`;
 
 // Custom form input component that integrates React Hook Form with Semantic UI
 export const FormInput = ({
@@ -149,7 +121,7 @@ export const LabeledFormInput = ({
   );
 };
 
-// Select component using native HTML select - styled to match LabeledFormInput
+// Select component using Semantic UI Dropdown - styled to match LabeledFormInput
 export const LabeledFormSelect = ({
   name,
   control,
@@ -166,38 +138,30 @@ export const LabeledFormSelect = ({
       rules={rules}
       defaultValue={defaultValue}
       render={({
-        field: { onChange, value, onBlur, ref },
+        field: { onChange, value, onBlur },
         fieldState: { error },
       }) => (
         <Form.Field error={!!error}>
-          <SelectFieldWrapper>
-            <div className="ui left labeled input">
-              <SelectWrapper>
-                <div className="icon-label">{label}</div>
-                <select
-                  ref={ref}
-                  value={value || ''}
-                  onChange={e => onChange(e.target.value)}
-                  onBlur={onBlur}
-                  className={value ? 'has-value' : ''}
-                >
-                  <option value="" disabled>
-                    {placeholder}
-                  </option>
-                  {options.map(opt => (
-                    <option key={opt.key} value={opt.value}>
-                      {opt.text}
-                    </option>
-                  ))}
-                </select>
-              </SelectWrapper>
-            </div>
-            {error && (
-              <Label pointing prompt>
-                {error.message}
-              </Label>
-            )}
-          </SelectFieldWrapper>
+          <Input
+            label={label}
+            labelPosition="left"
+            input={
+              <Dropdown
+                selection
+                placeholder={placeholder}
+                options={options}
+                value={value || ''}
+                onChange={(e, data) => onChange(data.value)}
+                onBlur={onBlur}
+                fluid
+              />
+            }
+          />
+          {error && (
+            <Label pointing prompt>
+              {error.message}
+            </Label>
+          )}
         </Form.Field>
       )}
     />
