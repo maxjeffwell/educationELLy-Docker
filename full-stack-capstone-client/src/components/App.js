@@ -79,27 +79,71 @@ const App = () => {
     <BrowserRouter>
       <GlobalStyle />
       <Container>
-        <ErrorBoundary>
+        <ErrorBoundary featureName="Application">
           <Header />
           <Routes>
+            {/* Public routes */}
             <Route path="/" element={<Landing />} />
-            <Route path="/signup" element={<Register />} />
+            <Route
+              path="/signup"
+              element={
+                <ErrorBoundary variant="inline" featureName="Registration">
+                  <Register />
+                </ErrorBoundary>
+              }
+            />
+            <Route
+              path="/signin"
+              element={
+                <ErrorBoundary variant="inline" featureName="Sign In">
+                  <Signin />
+                </ErrorBoundary>
+              }
+            />
+
+            {/* Protected routes with feature-level error boundaries */}
             <Route
               path="/students/:id/update"
-              element={<ProtectedUpdateStudent />}
+              element={
+                <ErrorBoundary variant="inline" featureName="Update Student">
+                  <ProtectedUpdateStudent />
+                </ErrorBoundary>
+              }
             />
-            <Route path="/students" element={<ProtectedStudents />} />
-            <Route path="/signin" element={<Signin />} />
-            <Route path="/dashboard/*" element={<ProtectedDashboard />} />
+            <Route
+              path="/students"
+              element={
+                <ErrorBoundary variant="inline" featureName="Student List">
+                  <ProtectedStudents />
+                </ErrorBoundary>
+              }
+            />
+            <Route
+              path="/dashboard/*"
+              element={
+                <ErrorBoundary variant="inline" featureName="Dashboard">
+                  <ProtectedDashboard />
+                </ErrorBoundary>
+              }
+            />
             <Route path="/signout" element={<Signout />} />
-            <Route path="/students/new" element={<ProtectedCreateStudent />} />
+            <Route
+              path="/students/new"
+              element={
+                <ErrorBoundary variant="inline" featureName="Create Student">
+                  <ProtectedCreateStudent />
+                </ErrorBoundary>
+              }
+            />
           </Routes>
           <ModalManager />
           <SessionManagerWrapper />
           <Footer />
         </ErrorBoundary>
       </Container>
-      <ChatBubble />
+      <ErrorBoundary variant="minimal" featureName="AI Chat">
+        <ChatBubble />
+      </ErrorBoundary>
     </BrowserRouter>
   );
 };

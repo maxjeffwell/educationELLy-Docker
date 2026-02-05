@@ -147,26 +147,34 @@ class AuthService {
 
   setTokens() {
     if (process.env.NODE_ENV === 'development') {
-      console.warn('AuthService.setTokens() is deprecated. Tokens are now managed via httpOnly cookies.');
+      console.warn(
+        'AuthService.setTokens() is deprecated. Tokens are now managed via httpOnly cookies.'
+      );
     }
   }
 
   setToken() {
     if (process.env.NODE_ENV === 'development') {
-      console.warn('AuthService.setToken() is deprecated. Tokens are now managed via httpOnly cookies.');
+      console.warn(
+        'AuthService.setToken() is deprecated. Tokens are now managed via httpOnly cookies.'
+      );
     }
   }
 
   getToken() {
     if (process.env.NODE_ENV === 'development') {
-      console.warn('AuthService.getToken() is deprecated. Tokens are now managed via httpOnly cookies.');
+      console.warn(
+        'AuthService.getToken() is deprecated. Tokens are now managed via httpOnly cookies.'
+      );
     }
     return null;
   }
 
   getRefreshToken() {
     if (process.env.NODE_ENV === 'development') {
-      console.warn('AuthService.getRefreshToken() is deprecated. Tokens are now managed via httpOnly cookies.');
+      console.warn(
+        'AuthService.getRefreshToken() is deprecated. Tokens are now managed via httpOnly cookies.'
+      );
     }
     return null;
   }

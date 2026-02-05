@@ -26,7 +26,9 @@ const SEO = ({
 }) => {
   const siteUrl = getSiteUrl();
   const fullUrl = canonicalUrl
-    ? (canonicalUrl.startsWith('http') ? canonicalUrl : `${siteUrl}${canonicalUrl}`)
+    ? canonicalUrl.startsWith('http')
+      ? canonicalUrl
+      : `${siteUrl}${canonicalUrl}`
     : siteUrl;
   const fullImageUrl = ogImage.startsWith('http')
     ? ogImage

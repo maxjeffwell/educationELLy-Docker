@@ -45,8 +45,8 @@ export const signin = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.error ||
-        error.response?.data?.message ||
-        'Invalid login email or password. Please try logging in again.'
+          error.response?.data?.message ||
+          'Invalid login email or password. Please try logging in again.'
       );
     }
   }
@@ -70,8 +70,8 @@ export const signup = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.error ||
-        error.response?.data?.message ||
-        'This email is in use. Please register using a different email.'
+          error.response?.data?.message ||
+          'This email is in use. Please register using a different email.'
       );
     }
   }
