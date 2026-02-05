@@ -22,6 +22,15 @@ import {
 import DeleteStudent from './DeleteStudent';
 
 export const StyledForm = styled(Form)`
+  /* Fix dropdown menu visibility - ensure closed by default */
+  .ui.dropdown .menu {
+    display: none !important;
+  }
+  .ui.dropdown.visible .menu,
+  .ui.dropdown.active .menu {
+    display: block !important;
+  }
+
  &&& form.ui.form {
     display: grid;
     min-width: 372px;
