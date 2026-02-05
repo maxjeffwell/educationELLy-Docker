@@ -50,24 +50,112 @@ const requireAuth = passport.authenticate('jwt', { session: false }); // When a 
 
 const requireSignin = passport.authenticate('local', { session: false });
 
-const Router = (app) => { // Inside this function we have access to our Express app
+const Router = (app) => {
   // Health check endpoint moved to index.js (before rate limiter)
 
   app.get('/', requireAuth, (req, res) => {
     res.send('GET request to homepage');
   });
 
+  /**
+   * @swagger
+   * /api/signin:
+   *   post:
+   *     summary: User login
+   *     tags: [Authentication]
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             $ref: '#/components/schemas/SigninRequest'
+   *     responses:
+   *       200:
+   *         description: Login successful, sets httpOnly cookie
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/AuthResponse'
+   *       401:
+   *         description: Invalid credentials
+   *       400:
+   *         description: Validation error
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   */
   app.post('/api/signin', signinValidationRules, handleValidationErrors, requireSignin, Signin);
 
+  /**
+   * @swagger
+   * /api/signup:
+   *   post:
+   *     summary: Register new user
+   *     tags: [Authentication]
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             $ref: '#/components/schemas/SignupRequest'
+   *     responses:
+   *       201:
+   *         description: Registration successful
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/AuthResponse'
+   *       422:
+   *         description: Email already in use
+   *       400:
+   *         description: Validation error
+   */
   app.post('/api/signup', validateSignup, handleValidationErrors, Signup);
 
-  // Token refresh endpoint (uses refresh token cookie)
+  /**
+   * @swagger
+   * /api/refresh:
+   *   post:
+   *     summary: Refresh access token
+   *     tags: [Authentication]
+   *     description: Uses refresh token from httpOnly cookie to issue new access token
+   *     responses:
+   *       200:
+   *         description: New access token issued
+   *       401:
+   *         description: Invalid or expired refresh token
+   */
   app.post('/api/refresh', Refresh);
 
-  // Signout - invalidates current session
+  /**
+   * @swagger
+   * /api/signout:
+   *   post:
+   *     summary: Logout current session
+   *     tags: [Authentication]
+   *     description: Invalidates current session and clears cookies
+   *     responses:
+   *       200:
+   *         description: Logout successful
+   */
   app.post('/api/signout', Signout);
 
-  // Signout from all devices - requires authentication
+  /**
+   * @swagger
+   * /api/signout-all:
+   *   post:
+   *     summary: Logout from all devices
+   *     tags: [Authentication]
+   *     security:
+   *       - cookieAuth: []
+   *     description: Revokes all refresh tokens for the user
+   *     responses:
+   *       200:
+   *         description: All sessions invalidated
+   *       401:
+   *         description: Not authenticated
+   */
   app.post('/api/signout-all', requireAuth, SignoutAll);
 
   // Legacy logout redirect (backward compatibility)
@@ -75,20 +163,115 @@ const Router = (app) => { // Inside this function we have access to our Express 
     res.redirect(307, '/api/signout');
   });
 
+  /**
+   * @swagger
+   * /api/whoami:
+   *   get:
+   *     summary: Get current user info
+   *     tags: [Authentication]
+   *     security:
+   *       - cookieAuth: []
+   *     responses:
+   *       200:
+   *         description: Current user information
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/User'
+   *       401:
+   *         description: Not authenticated
+   */
   app.get('/api/whoami', requireAuth, (req, res) => res.json(req.user));
 
-  // Expose valid field values for frontend dropdowns
+  /**
+   * @swagger
+   * /api/valid-values:
+   *   get:
+   *     summary: Get valid enum values
+   *     tags: [Utility]
+   *     description: Returns valid values for dropdown fields (ellStatuses, designations, etc.)
+   *     responses:
+   *       200:
+   *         description: Valid field values
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/ValidValues'
+   */
   app.get('/api/valid-values', (req, res) => res.json(validValues));
 
+  /**
+   * @swagger
+   * /api/test-auth:
+   *   get:
+   *     summary: Test authentication
+   *     tags: [Utility]
+   *     security:
+   *       - cookieAuth: []
+   *     description: Verifies JWT authentication is working
+   *     responses:
+   *       200:
+   *         description: Authentication verified
+   *       401:
+   *         description: Not authenticated
+   */
   app.get('/api/test-auth', requireAuth, (req, res) => {
     console.log('GET /api/test-auth - User authenticated:', req.user?.email);
     res.json({
       message: 'Authentication working',
       user: req.user?.email,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   });
 
+  /**
+   * @swagger
+   * /api/students:
+   *   get:
+   *     summary: Get paginated list of students
+   *     tags: [Students]
+   *     security:
+   *       - cookieAuth: []
+   *     parameters:
+   *       - in: query
+   *         name: page
+   *         schema:
+   *           type: integer
+   *           default: 1
+   *         description: Page number (1-based)
+   *       - in: query
+   *         name: limit
+   *         schema:
+   *           type: integer
+   *           default: 25
+   *           maximum: 100
+   *         description: Items per page
+   *       - in: query
+   *         name: sort
+   *         schema:
+   *           type: string
+   *           default: fullName
+   *           enum: [fullName, ellStatus, gradeLevel, teacher, school, active, createdAt]
+   *         description: Sort field
+   *       - in: query
+   *         name: order
+   *         schema:
+   *           type: string
+   *           default: asc
+   *           enum: [asc, desc]
+   *         description: Sort order
+   *     responses:
+   *       200:
+   *         description: Paginated student list
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/PaginatedStudents'
+   *       401:
+   *         description: Not authenticated
+   *       400:
+   *         description: Invalid pagination parameters
+   */
   app.get(
     '/api/students',
     requireAuth,
@@ -149,6 +332,33 @@ const Router = (app) => { // Inside this function we have access to our Express 
     }
   );
 
+  /**
+   * @swagger
+   * /api/students/{id}:
+   *   get:
+   *     summary: Get student by ID
+   *     tags: [Students]
+   *     security:
+   *       - cookieAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         required: true
+   *         schema:
+   *           type: string
+   *         description: MongoDB ObjectId
+   *     responses:
+   *       200:
+   *         description: Student details
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Student'
+   *       404:
+   *         description: Student not found
+   *       401:
+   *         description: Not authenticated
+   */
   app.get('/api/students/:id', requireAuth, mongoIdValidation, handleValidationErrors, (req, res) => {
     Student.findById(req.params.id)
       .then((result) => {
@@ -160,6 +370,34 @@ const Router = (app) => { // Inside this function we have access to our Express 
       .catch((err) => handleServerError(res, err, 'Failed to retrieve student'));
   });
 
+  /**
+   * @swagger
+   * /api/students:
+   *   post:
+   *     summary: Create new student
+   *     tags: [Students]
+   *     security:
+   *       - cookieAuth: []
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             $ref: '#/components/schemas/StudentInput'
+   *     responses:
+   *       200:
+   *         description: Student created successfully
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: array
+   *               items:
+   *                 $ref: '#/components/schemas/Student'
+   *       400:
+   *         description: Validation error
+   *       401:
+   *         description: Not authenticated
+   */
   app.post('/api/students', requireAuth, studentValidationRules, handleValidationErrors, async (req, res) => {
     const newStudent = {
       fullName: req.body.fullName,
@@ -189,6 +427,48 @@ const Router = (app) => { // Inside this function we have access to our Express 
     }
   });
 
+  /**
+   * @swagger
+   * /api/students/{id}:
+   *   put:
+   *     summary: Update student
+   *     tags: [Students]
+   *     security:
+   *       - cookieAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         required: true
+   *         schema:
+   *           type: string
+   *         description: MongoDB ObjectId
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             $ref: '#/components/schemas/StudentInput'
+   *     responses:
+   *       200:
+   *         description: Student updated successfully
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 success:
+   *                   type: boolean
+   *                 message:
+   *                   type: string
+   *                 result:
+   *                   $ref: '#/components/schemas/Student'
+   *       404:
+   *         description: Student not found
+   *       400:
+   *         description: Validation error
+   *       401:
+   *         description: Not authenticated
+   */
   app.put('/api/students/:id', requireAuth, mongoIdValidation, studentValidationRules, handleValidationErrors, async (req, res) => {
     const updatedStudent = {
       fullName: req.body.fullName,
@@ -225,6 +505,29 @@ const Router = (app) => { // Inside this function we have access to our Express 
     }
   });
 
+  /**
+   * @swagger
+   * /api/students/{id}:
+   *   delete:
+   *     summary: Delete student
+   *     tags: [Students]
+   *     security:
+   *       - cookieAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         required: true
+   *         schema:
+   *           type: string
+   *         description: MongoDB ObjectId
+   *     responses:
+   *       204:
+   *         description: Student deleted successfully
+   *       404:
+   *         description: Student not found
+   *       401:
+   *         description: Not authenticated
+   */
   app.delete('/api/students/:id', requireAuth, mongoIdValidation, handleValidationErrors, async (req, res) => {
     try {
       const result = await Student.findOneAndDelete({ _id: req.params.id });
@@ -239,10 +542,118 @@ const Router = (app) => { // Inside this function we have access to our Express 
   });
 
   // AI-powered features with input validation
+  /**
+   * @swagger
+   * /api/ai/study-recommendations:
+   *   post:
+   *     summary: Generate study recommendations
+   *     tags: [AI Features]
+   *     security:
+   *       - cookieAuth: []
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             $ref: '#/components/schemas/StudyRecommendationsRequest'
+   *     responses:
+   *       200:
+   *         description: Study recommendations generated
+   *       401:
+   *         description: Not authenticated
+   *       503:
+   *         description: AI gateway unavailable
+   */
   app.post('/api/ai/study-recommendations', requireAuth, studyRecommendationsValidation, handleValidationErrors, generateStudyRecommendations);
+
+  /**
+   * @swagger
+   * /api/ai/flashcard:
+   *   post:
+   *     summary: Generate flashcard
+   *     tags: [AI Features]
+   *     security:
+   *       - cookieAuth: []
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             $ref: '#/components/schemas/FlashcardRequest'
+   *     responses:
+   *       200:
+   *         description: Flashcard generated
+   *       401:
+   *         description: Not authenticated
+   *       503:
+   *         description: AI gateway unavailable
+   */
   app.post('/api/ai/flashcard', requireAuth, flashcardValidation, handleValidationErrors, generateFlashcard);
+
+  /**
+   * @swagger
+   * /api/ai/quiz:
+   *   post:
+   *     summary: Generate quiz questions
+   *     tags: [AI Features]
+   *     security:
+   *       - cookieAuth: []
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             $ref: '#/components/schemas/QuizRequest'
+   *     responses:
+   *       200:
+   *         description: Quiz questions generated
+   *       401:
+   *         description: Not authenticated
+   *       503:
+   *         description: AI gateway unavailable
+   */
   app.post('/api/ai/quiz', requireAuth, quizValidation, handleValidationErrors, generateQuiz);
+
+  /**
+   * @swagger
+   * /api/ai/chat:
+   *   post:
+   *     summary: Chat with AI assistant
+   *     tags: [AI Features]
+   *     security:
+   *       - cookieAuth: []
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             $ref: '#/components/schemas/ChatRequest'
+   *     responses:
+   *       200:
+   *         description: AI response
+   *       401:
+   *         description: Not authenticated
+   *       503:
+   *         description: AI gateway unavailable
+   */
   app.post('/api/ai/chat', requireAuth, chatValidation, handleValidationErrors, chat);
+
+  /**
+   * @swagger
+   * /api/ai/health:
+   *   get:
+   *     summary: Check AI gateway health
+   *     tags: [AI Features]
+   *     responses:
+   *       200:
+   *         description: AI gateway is healthy
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/HealthCheck'
+   *       503:
+   *         description: AI gateway unavailable
+   */
   app.get('/api/ai/health', checkAIHealth);
 
   // Log AI routes registration

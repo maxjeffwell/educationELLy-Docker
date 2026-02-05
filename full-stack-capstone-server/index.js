@@ -23,6 +23,9 @@ import {
   recordConnectionError,
   updatePoolMetrics,
 } from './utils/dbMetrics.js';
+import swaggerUi from 'swagger-ui-express';
+import swaggerJsdoc from 'swagger-jsdoc';
+import { swaggerOptions } from './config/swagger.js';
 
 import './services/passport.js';
 import './models/student.js';
@@ -143,6 +146,10 @@ app.get('/metrics', async (req, res) => {
   res.set('Content-Type', register.contentType);
   res.end(await register.metrics());
 });
+
+// Swagger API documentation
+const swaggerSpec = swaggerJsdoc(swaggerOptions);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
