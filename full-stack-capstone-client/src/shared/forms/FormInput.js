@@ -110,7 +110,7 @@ export const LabeledFormInput = ({
   );
 };
 
-// Dropdown/Select component for enum fields
+// Dropdown/Select component for enum fields - styled to match LabeledFormInput
 export const LabeledFormSelect = ({
   name,
   control,
@@ -132,18 +132,26 @@ export const LabeledFormSelect = ({
         fieldState: { error },
       }) => (
         <Form.Field error={!!error}>
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            {label}
-            <Select
-              {...field}
-              {...selectProps}
-              placeholder={placeholder}
-              options={options}
-              value={value}
-              onChange={(e, { value: newValue }) => onChange(newValue)}
-              style={{ flex: 1, marginLeft: '8px' }}
-            />
-          </div>
+          <Input
+            label={label}
+            labelPosition="left"
+            input={
+              <Select
+                {...field}
+                {...selectProps}
+                placeholder={placeholder}
+                options={options}
+                value={value}
+                onChange={(e, { value: newValue }) => onChange(newValue)}
+                fluid
+                style={{
+                  borderTopLeftRadius: 0,
+                  borderBottomLeftRadius: 0,
+                  minWidth: '200px',
+                }}
+              />
+            }
+          />
           {error && (
             <Label pointing prompt>
               {error.message}
