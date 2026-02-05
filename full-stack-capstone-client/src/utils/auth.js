@@ -22,8 +22,15 @@ class AuthService {
       async error => {
         const originalRequest = error.config;
 
-        // If 401 and haven't already retried, attempt token refresh
-        if (error.response?.status === 401 && !originalRequest._retry) {
+        // Don't retry refresh endpoint itself to avoid infinite loop
+        const isRefreshRequest = originalRequest.url?.includes('/refresh');
+
+        // If 401, not a refresh request, and haven't already retried, attempt token refresh
+        if (
+          error.response?.status === 401 &&
+          !isRefreshRequest &&
+          !originalRequest._retry
+        ) {
           originalRequest._retry = true;
 
           try {
