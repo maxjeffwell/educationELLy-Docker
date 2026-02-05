@@ -17,4 +17,5 @@ export {
   LabeledFormSelect,
   VALID_DESIGNATIONS,
   VALID_COMPOSITE_LEVELS,
+  VALID_ELL_STATUS,
 } from './forms/FormInput';

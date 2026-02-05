@@ -12,6 +12,7 @@ import {
   LabeledFormSelect,
   VALID_DESIGNATIONS,
   VALID_COMPOSITE_LEVELS,
+  VALID_ELL_STATUS,
 } from '../../../shared';
 import { StyledForm } from './UpdateStudent';
 
@@ -228,15 +229,13 @@ const CreateStudent = () => {
             />
           </Form.Group>
           <Form.Group>
-            <LabeledFormInput
+            <LabeledFormSelect
               control={control}
               name="ellStatus"
               rules={validationRules.nonEmpty}
-              label={{
-                content: <Icon color="blue" name="world" size="large" />,
-              }}
-              labelPosition="left"
-              placeholder="enter ELL Status"
+              label={<Icon color="blue" name="world" size="large" />}
+              placeholder="select ELL Status"
+              options={VALID_ELL_STATUS}
             />
           </Form.Group>
           <Form.Group>

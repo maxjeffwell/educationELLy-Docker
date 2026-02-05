@@ -17,6 +17,7 @@ import {
   LabeledFormSelect,
   VALID_DESIGNATIONS,
   VALID_COMPOSITE_LEVELS,
+  VALID_ELL_STATUS,
 } from '../../../shared';
 import DeleteStudent from './DeleteStudent';
 
@@ -254,14 +255,12 @@ const UpdateStudent = () => {
             placeholder="enter grade level"
           />
 
-          <LabeledFormInput
+          <LabeledFormSelect
             name="ellStatus"
             control={control}
-            label={{
-              content: <Icon color="orange" name="world" size="large" />,
-            }}
-            labelPosition="left"
-            placeholder="enter ELL Status"
+            label={<Icon color="orange" name="world" size="large" />}
+            placeholder="select ELL Status"
+            options={VALID_ELL_STATUS}
           />
 
           <LabeledFormSelect

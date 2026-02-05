@@ -12,6 +12,15 @@ export const VALID_DESIGNATIONS = [
   { key: 'tbd', value: 'TBD', text: 'TBD' },
 ];
 
+export const VALID_ELL_STATUS = [
+  { key: 'active', value: 'Active', text: 'Active' },
+  { key: 'former', value: 'Former', text: 'Former' },
+  { key: 'never', value: 'Never', text: 'Never' },
+  { key: 'monitored', value: 'Monitored', text: 'Monitored' },
+  { key: 'exited', value: 'Exited', text: 'Exited' },
+  { key: 'waived', value: 'Waived', text: 'Waived' },
+];
+
 export const VALID_COMPOSITE_LEVELS = [
   { key: 'beginning', value: 'Beginning', text: 'Beginning' },
   {
@@ -31,9 +40,9 @@ export const VALID_COMPOSITE_LEVELS = [
 
 // Styled wrapper for select to match labeled inputs
 const SelectWrapper = styled.div`
-  display: inline-flex;
+  display: flex;
   align-items: stretch;
-  max-width: 100%;
+  max-width: 330px;
 
   .icon-label {
     display: flex;
@@ -50,17 +59,15 @@ const SelectWrapper = styled.div`
   }
 
   select {
-    width: 232px;
+    width: 280px;
     max-width: calc(100% - 50px);
     font-family: 'Roboto', sans-serif;
     font-size: 1.2em;
     font-weight: 400;
     color: rgba(191, 191, 191, 1);
-    background-color: #f9fafb;
-    border-top: 2px solid #21ba45;
-    border-right: 2px solid #21ba45;
-    border-bottom: 2px solid #21ba45;
-    border-left: none;
+    background-color: #e8e8e8;
+    border: 2px solid #21ba45 !important;
+    border-left: none !important;
     border-radius: 0;
     border-top-right-radius: 5px;
     border-bottom-right-radius: 5px;
@@ -68,13 +75,21 @@ const SelectWrapper = styled.div`
     cursor: pointer;
     height: 48px;
     box-sizing: border-box;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 16px;
+    padding-right: 35px;
   }
 
   select.has-value {
     color: #2185d0;
     font-weight: 700;
     font-size: 2em;
-    background-color: #f9fafb;
+    background-color: #e8e8e8;
     padding: 5px 10px;
   }
 
