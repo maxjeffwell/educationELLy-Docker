@@ -1,29 +1,46 @@
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Container } from 'semantic-ui-react';
 import { createGlobalStyle } from 'styled-components';
 
-// Shared components
+// Shared components (static - always needed)
 import {
   Header,
   Footer,
   ErrorBoundary,
   SessionManagerWrapper,
   Landing,
+  RouteLoader,
 } from '../shared';
 
-// Feature imports
-import { Register, Signin, Signout, authRequired } from '../features/auth';
+// Auth HOC (static - needed for protected routes)
+import { authRequired } from '../features/auth';
 
-import {
-  StudentList as Students,
-  CreateStudent,
-  UpdateStudent,
-} from '../features/students';
+// Helper for lazy loading named exports from barrel files
+const lazyNamed = (importFn, exportName) =>
+  lazy(() => importFn().then(module => ({ default: module[exportName] })));
 
-import { Dashboard } from '../features/dashboard';
-import { ModalManager } from '../features/modals';
-import { ChatBubble } from '../features/ai';
+// Lazy-loaded feature components (code splitting)
+const Register = lazyNamed(() => import('../features/auth'), 'Register');
+const Signin = lazyNamed(() => import('../features/auth'), 'Signin');
+const Signout = lazyNamed(() => import('../features/auth'), 'Signout');
+
+const Students = lazyNamed(() => import('../features/students'), 'StudentList');
+const CreateStudent = lazyNamed(
+  () => import('../features/students'),
+  'CreateStudent'
+);
+const UpdateStudent = lazyNamed(
+  () => import('../features/students'),
+  'UpdateStudent'
+);
+
+const Dashboard = lazyNamed(() => import('../features/dashboard'), 'Dashboard');
+const ModalManager = lazyNamed(
+  () => import('../features/modals'),
+  'ModalManager'
+);
+const ChatBubble = lazyNamed(() => import('../features/ai'), 'ChatBubble');
 
 // Create protected components
 const ProtectedStudents = authRequired(Students);
@@ -85,69 +102,73 @@ const App = () => {
       <Container>
         <ErrorBoundary featureName="Application">
           <Header />
-          <Routes>
-            {/* Public routes */}
-            <Route path="/" element={<Landing />} />
-            <Route
-              path="/signup"
-              element={
-                <ErrorBoundary variant="inline" featureName="Registration">
-                  <Register />
-                </ErrorBoundary>
-              }
-            />
-            <Route
-              path="/signin"
-              element={
-                <ErrorBoundary variant="inline" featureName="Sign In">
-                  <Signin />
-                </ErrorBoundary>
-              }
-            />
+          <Suspense fallback={<RouteLoader />}>
+            <Routes>
+              {/* Public routes */}
+              <Route path="/" element={<Landing />} />
+              <Route
+                path="/signup"
+                element={
+                  <ErrorBoundary variant="inline" featureName="Registration">
+                    <Register />
+                  </ErrorBoundary>
+                }
+              />
+              <Route
+                path="/signin"
+                element={
+                  <ErrorBoundary variant="inline" featureName="Sign In">
+                    <Signin />
+                  </ErrorBoundary>
+                }
+              />
 
-            {/* Protected routes with feature-level error boundaries */}
-            <Route
-              path="/students/:id/update"
-              element={
-                <ErrorBoundary variant="inline" featureName="Update Student">
-                  <ProtectedUpdateStudent />
-                </ErrorBoundary>
-              }
-            />
-            <Route
-              path="/students"
-              element={
-                <ErrorBoundary variant="inline" featureName="Student List">
-                  <ProtectedStudents />
-                </ErrorBoundary>
-              }
-            />
-            <Route
-              path="/dashboard/*"
-              element={
-                <ErrorBoundary variant="inline" featureName="Dashboard">
-                  <ProtectedDashboard />
-                </ErrorBoundary>
-              }
-            />
-            <Route path="/signout" element={<Signout />} />
-            <Route
-              path="/students/new"
-              element={
-                <ErrorBoundary variant="inline" featureName="Create Student">
-                  <ProtectedCreateStudent />
-                </ErrorBoundary>
-              }
-            />
-          </Routes>
-          <ModalManager />
+              {/* Protected routes with feature-level error boundaries */}
+              <Route
+                path="/students/:id/update"
+                element={
+                  <ErrorBoundary variant="inline" featureName="Update Student">
+                    <ProtectedUpdateStudent />
+                  </ErrorBoundary>
+                }
+              />
+              <Route
+                path="/students"
+                element={
+                  <ErrorBoundary variant="inline" featureName="Student List">
+                    <ProtectedStudents />
+                  </ErrorBoundary>
+                }
+              />
+              <Route
+                path="/dashboard/*"
+                element={
+                  <ErrorBoundary variant="inline" featureName="Dashboard">
+                    <ProtectedDashboard />
+                  </ErrorBoundary>
+                }
+              />
+              <Route path="/signout" element={<Signout />} />
+              <Route
+                path="/students/new"
+                element={
+                  <ErrorBoundary variant="inline" featureName="Create Student">
+                    <ProtectedCreateStudent />
+                  </ErrorBoundary>
+                }
+              />
+            </Routes>
+            <ModalManager />
+          </Suspense>
           <SessionManagerWrapper />
           <Footer />
         </ErrorBoundary>
       </Container>
-      <ErrorBoundary variant="minimal" featureName="AI Chat">
-        <ChatBubble />
-      </ErrorBoundary>
+      <Suspense fallback={null}>
+        <ErrorBoundary variant="minimal" featureName="AI Chat">
+          <ChatBubble />
+        </ErrorBoundary>
+      </Suspense>
     </BrowserRouter>
   );
 };
