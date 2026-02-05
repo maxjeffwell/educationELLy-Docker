@@ -15,8 +15,8 @@ import {
   EmptyState,
   ErrorMessage,
 } from './AIChat.styles';
-import { API_BASE_URL } from '../../config';
-import authService from '../../utils/auth';
+import { API_BASE_URL } from '../../../config';
+import authService from '../../../utils/auth';
 
 const ChatBubble = () => {
   // Subscribe to Redux auth state for reactivity

@@ -3,23 +3,27 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Container } from 'semantic-ui-react';
 import { createGlobalStyle } from 'styled-components';
 
-import Header from './Header';
-import Footer from './Footer';
-import ErrorBoundary from './ErrorBoundary';
-import ModalManager from './ModalManager';
-import authRequired from './authRequired';
-import SessionManagerWrapper from './SessionManagerWrapper';
-import { ChatBubble } from './AIChat';
+// Shared components
+import {
+  Header,
+  Footer,
+  ErrorBoundary,
+  SessionManagerWrapper,
+  Landing,
+} from '../shared';
 
-// Temporarily disable lazy loading for debugging
-import Landing from './Landing';
-import Register from './auth/Register';
-import Students from './auth/Students';
-import Signin from './auth/Signin';
-import Dashboard from './Dashboard';
-import Signout from './auth/Signout';
-import CreateStudent from './CreateStudent';
-import UpdateStudent from './UpdateStudent';
+// Feature imports
+import { Register, Signin, Signout, authRequired } from '../features/auth';
+
+import {
+  StudentList as Students,
+  CreateStudent,
+  UpdateStudent,
+} from '../features/students';
+
+import { Dashboard } from '../features/dashboard';
+import { ModalManager } from '../features/modals';
+import { ChatBubble } from '../features/ai';
 
 // Create protected components
 const ProtectedStudents = authRequired(Students);

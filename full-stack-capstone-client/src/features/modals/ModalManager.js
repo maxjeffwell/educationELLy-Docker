@@ -1,8 +1,7 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { hideModal } from '../store/actions';
-import { selectModal } from '../store/slices/modalSlice';
+import { hideModal, selectModal } from './modalSlice';
 
 const backdropStyle = {
   position: 'fixed',

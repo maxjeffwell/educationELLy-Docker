@@ -2,9 +2,10 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { Modal, Button, Header, Icon } from 'semantic-ui-react';
-import { SessionManager } from '../utils/security';
-import authService from '../utils/auth';
-import * as actions from '../store/actions';
+import { SessionManager } from '../../utils/security';
+import authService from '../../utils/auth';
+import { signout } from '../../features/auth/authSlice';
+import { fetchStudents } from '../../features/students/studentsSlice';
 
 const SessionManagerWrapper = () => {
   const [showWarning, setShowWarning] = useState(false);
@@ -33,7 +34,7 @@ const SessionManagerWrapper = () => {
   }, []);
 
   const handleTimeout = useCallback(() => {
-    dispatch(actions.signout());
+    dispatch(signout());
     navigate('/signin');
   }, [dispatch, navigate]);
 
@@ -72,7 +73,7 @@ const SessionManagerWrapper = () => {
 
     // Make a simple API call to refresh the session on the server
     if (authService.isAuthenticated()) {
-      dispatch(actions.fetchStudents());
+      dispatch(fetchStudents());
     }
   };
 

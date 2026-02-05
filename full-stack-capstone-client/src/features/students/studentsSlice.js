@@ -6,7 +6,7 @@ import {
 import axios from 'axios';
 import { API_BASE_URL } from '../../config';
 import authService from '../../utils/auth';
-import { setError } from './authSlice';
+import { setError } from '../auth/authSlice';
 
 // Create entity adapter for normalized state
 const studentsAdapter = createEntityAdapter({

@@ -3,12 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
-import {
-  showModal,
-  hideModal,
-  deleteStudent,
-  fetchStudents,
-} from '../store/actions';
+import { showModal, hideModal } from '../../modals';
+import { deleteStudent, fetchStudents } from '../studentsSlice';
 
 const StyledConfirmButton = styled.button`
   cursor: pointer;

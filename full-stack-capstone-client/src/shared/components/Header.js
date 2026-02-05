@@ -3,9 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 
-import { selectAuth } from '../store/slices/authSlice';
+import { selectAuth } from '../../features/auth/authSlice';
 import LazyImage from './LazyImage';
-import logo from '../logo/logo.png';
+import logo from '../../logo/logo.png';
 
 const CustomNavContainer = styled.div`
   border: 5px solid ${props => props.theme.orange};

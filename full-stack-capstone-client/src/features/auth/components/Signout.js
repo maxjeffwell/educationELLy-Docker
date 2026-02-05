@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { StyledMessage } from './Signin';
-import { signout } from '../../store/actions';
+import { signout } from '../authSlice';
 
 const Signout = () => {
   const dispatch = useDispatch();

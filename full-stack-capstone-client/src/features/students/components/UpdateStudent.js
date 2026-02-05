@@ -8,12 +8,11 @@ import styled from 'styled-components';
 import {
   fetchStudent,
   updateStudent,
-  showModal,
-  hideModal,
-} from '../store/actions';
-import { selectStudentById } from '../store/slices/studentsSlice';
-import { validationRules } from '../validators/hookFormValidators';
-import { LabeledFormInput } from './forms/FormInput';
+  selectStudentById,
+} from '../studentsSlice';
+import { showModal, hideModal } from '../../modals';
+import { validationRules } from '../../../validators/hookFormValidators';
+import { LabeledFormInput } from '../../../shared';
 import DeleteStudent from './DeleteStudent';
 
 export const StyledForm = styled(Form)`

@@ -1,9 +1,9 @@
 import { configureStore } from '@reduxjs/toolkit';
-import authReducer from './slices/authSlice';
-import studentsReducer from './slices/studentsSlice';
-import toggleReducer from './slices/toggleSlice';
-import signupReducer from './slices/signupSlice';
-import modalReducer from './slices/modalSlice';
+import authReducer from '../features/auth/authSlice';
+import signupReducer from '../features/auth/signupSlice';
+import studentsReducer from '../features/students/studentsSlice';
+import toggleReducer from '../features/dashboard/toggleSlice';
+import modalReducer from '../features/modals/modalSlice';
 
 export const store = configureStore({
   reducer: {

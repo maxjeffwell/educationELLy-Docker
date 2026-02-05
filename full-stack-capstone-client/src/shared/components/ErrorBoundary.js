@@ -9,7 +9,7 @@ import {
   Icon,
 } from 'semantic-ui-react';
 import styled from 'styled-components';
-import { captureException } from '../utils/sentry';
+import { captureException } from '../../utils/sentry';
 
 /**
  * Error boundary variants for different UI contexts:

@@ -9,9 +9,8 @@ import {
   selectAllStudents,
   selectStudentsLoading,
   selectPagination,
-} from '../../store/slices/studentsSlice';
-import LoadingSpinner from '../LoadingSpinner';
-import Pagination from '../Pagination';
+} from '../studentsSlice';
+import { LoadingSpinner, Pagination } from '../../../shared';
 
 const StyledCard = styled(Card)`
   &&& .ui.card.student-card {

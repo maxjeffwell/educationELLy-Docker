@@ -13,9 +13,9 @@ import {
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 
-import * as actions from '../../store/actions';
-import { validationRules } from '../../validators/hookFormValidators';
-import { LabeledFormInput } from '../forms/FormInput';
+import { LabeledFormInput } from '../../../shared';
+import { signin } from '../authSlice';
+import { validationRules } from '../../../validators/hookFormValidators';
 
 export const StyledMessage = styled(Message)`
   &&& {
@@ -157,7 +157,7 @@ const Signin = () => {
 
   const onSubmit = formData => {
     dispatch(
-      actions.signin({
+      signin({
         formData,
       })
     );

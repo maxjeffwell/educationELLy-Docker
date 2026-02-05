@@ -3,9 +3,9 @@ import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { toggleSidebar } from '../store/actions';
-import LazyImage from './LazyImage';
-import claptrap_vector from '../logo/claptrap_vector.png';
+import { toggleSidebar } from '../toggleSlice';
+import { LazyImage } from '../../../shared';
+import claptrap_vector from '../../../logo/claptrap_vector.png';
 
 const StyledNav = styled.div`
   margin-top: 20px;

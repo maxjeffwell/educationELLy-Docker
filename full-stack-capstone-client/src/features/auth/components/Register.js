@@ -12,14 +12,12 @@ import {
 } from 'semantic-ui-react';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
-import SEO from '../SEO';
-
-import * as actions from '../../store/actions';
+import { SEO, LabeledFormInput } from '../../../shared';
+import { signup } from '../authSlice';
 import {
   validationRules,
   combineRules,
-} from '../../validators/hookFormValidators';
-import { LabeledFormInput } from '../forms/FormInput';
+} from '../../../validators/hookFormValidators';
 
 const StyledSegment = styled(Segment)`
   &&& {
@@ -158,7 +156,7 @@ const Register = () => {
 
   const onSubmit = formData => {
     dispatch(
-      actions.signup({
+      signup({
         formData,
       })
     );

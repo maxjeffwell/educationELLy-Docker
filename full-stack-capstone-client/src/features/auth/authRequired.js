@@ -3,7 +3,7 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import authService from '../utils/auth';
+import authService from '../../utils/auth';
 
 const authRequired = ChildComponent => {
   return props => {

@@ -1,15 +1,16 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { Routes, Route } from 'react-router-dom';
-import Navigation from './Navigation';
-import authRequired from './authRequired';
-import DashboardHome from './DashboardHome';
-import Students from './auth/Students';
-import SideBar from './Sidebar';
-import SEO from './SEO';
 import { Grid } from 'semantic-ui-react';
 import styled from 'styled-components';
-import { selectIsSidebarToggled } from '../store/slices/toggleSlice';
+
+import Navigation from './Navigation';
+import DashboardHome from './DashboardHome';
+import SideBar from './Sidebar';
+import { authRequired } from '../../auth';
+import { StudentList as Students } from '../../students';
+import { SEO } from '../../../shared';
+import { selectIsSidebarToggled } from '../toggleSlice';
 
 const StyledGrid = styled(Grid)`
   &&& div .ui.centered.grid {

@@ -4,10 +4,10 @@ import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import { Form, Icon, Button, Grid, Message } from 'semantic-ui-react';
 
-import { createStudent } from '../store/slices/studentsSlice';
-import { showModal, hideModal } from '../store/actions';
-import { validationRules } from '../validators/hookFormValidators';
-import { LabeledFormInput } from './forms/FormInput';
+import { createStudent } from '../studentsSlice';
+import { showModal, hideModal } from '../../modals';
+import { validationRules } from '../../../validators/hookFormValidators';
+import { LabeledFormInput } from '../../../shared';
 import { StyledForm } from './UpdateStudent';
 
 const CreateStudent = () => {
