@@ -1,6 +1,7 @@
 import React from 'react';
 import { Controller } from 'react-hook-form';
 import { Form, Input, Label, Dropdown } from 'semantic-ui-react';
+import styled from 'styled-components';
 
 // Valid enum values for student fields (must match server validation)
 export const VALID_DESIGNATIONS = [
@@ -27,6 +28,51 @@ export const VALID_COMPOSITE_LEVELS = [
   { key: 'advanced', value: 'Advanced', text: 'Advanced' },
   { key: 'na', value: 'N/A', text: 'N/A' },
 ];
+
+// Styled wrapper for dropdown to match labeled inputs
+const DropdownWrapper = styled.div`
+  display: flex;
+  align-items: stretch;
+
+  .icon-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    border: 2px solid #f2711c;
+    border-radius: 5px;
+    background: #e8e8e8;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  .ui.dropdown.selection {
+    flex: 1;
+    font-family: 'Roboto', 'sans-serif';
+    font-size: 2em;
+    font-weight: 700;
+    color: #2185d0;
+    border: 2px solid #21ba45;
+    border-left: none;
+    border-radius: 0;
+    border-top-right-radius: 0.28571429rem;
+    border-bottom-right-radius: 0.28571429rem;
+    min-height: auto;
+    padding: 0.5em 1em;
+  }
+
+  .ui.dropdown.selection .text {
+    font-family: 'Roboto', 'sans-serif';
+    font-weight: 700;
+    color: #2185d0;
+  }
+
+  .ui.dropdown.selection .menu .item {
+    font-family: 'Roboto', 'sans-serif';
+    font-size: 0.6em;
+    font-weight: 600;
+  }
+`;
 
 // Custom form input component that integrates React Hook Form with Semantic UI
 export const FormInput = ({
@@ -131,19 +177,17 @@ export const LabeledFormSelect = ({
         fieldState: { error },
       }) => (
         <Form.Field error={!!error}>
-          <div className="ui left labeled input">
-            <Label>{label}</Label>
+          <DropdownWrapper>
+            <div className="icon-label">{label}</div>
             <Dropdown
               selection
-              fluid
               placeholder={placeholder}
               options={options}
               value={value}
               onChange={(e, { value: newValue }) => onChange(newValue)}
               onBlur={onBlur}
-              className="labeled-dropdown"
             />
-          </div>
+          </DropdownWrapper>
           {error && (
             <Label pointing prompt>
               {error.message}
