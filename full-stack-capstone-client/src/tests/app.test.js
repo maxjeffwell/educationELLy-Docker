@@ -60,13 +60,16 @@ describe('<App />', () => {
     renderApp();
 
     // Landing page content should be shown at root path
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('educationELLy');
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
+      'educationELLy'
+    );
   });
 
   it('Should have valid container element', () => {
     const { container } = renderApp();
 
     // App should render a valid container
+    // eslint-disable-next-line testing-library/no-node-access
     expect(container.firstChild).toBeTruthy();
   });
 });

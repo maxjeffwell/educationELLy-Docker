@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen } from './test-utils';
-import authRequired from '../components/authRequired';
+import authRequired from '../features/auth/authRequired';
 
 // Create a test component to wrap with authRequired HOC
 const TestComponent = () => <div>Protected Content</div>;

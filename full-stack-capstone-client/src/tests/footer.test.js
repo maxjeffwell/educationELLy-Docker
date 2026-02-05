@@ -11,7 +11,9 @@ describe('<Footer />', () => {
   it('Should display copyright information', () => {
     render(<Footer />);
     const currentYear = new Date().getFullYear();
-    expect(screen.getByText(new RegExp(`© ${currentYear}`))).toBeInTheDocument();
+    expect(
+      screen.getByText(new RegExp(`© ${currentYear}`))
+    ).toBeInTheDocument();
   });
 
   it('Should display app name', () => {

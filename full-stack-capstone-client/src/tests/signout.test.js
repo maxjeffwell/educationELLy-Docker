@@ -21,7 +21,12 @@ describe('<Signout />', () => {
 
   it('Should clear authenticated state after signout', () => {
     const preloadedState = {
-      auth: { authenticated: true, user: { email: 'test@test.com' }, errorMessage: '', loading: false },
+      auth: {
+        authenticated: true,
+        user: { email: 'test@test.com' },
+        errorMessage: '',
+        loading: false,
+      },
     };
 
     const { store } = render(<Signout />, { preloadedState });

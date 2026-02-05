@@ -11,13 +11,19 @@ describe('<Landing />', () => {
 
   it('Should display the app title', () => {
     render(<Landing />);
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('educationELLy');
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
+      'educationELLy'
+    );
   });
 
   it('Should display feature list', () => {
     render(<Landing />);
-    expect(screen.getByText(/Student data at your fingertips/i)).toBeInTheDocument();
-    expect(screen.getByText(/Quickly access student lists/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Student data at your fingertips/i)
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/Quickly access student lists/i)
+    ).toBeInTheDocument();
     expect(screen.getByText(/AI-Powered Assistant/i)).toBeInTheDocument();
   });
 

@@ -6,7 +6,7 @@ import * as Sentry from '@sentry/react';
  */
 export function initSentry() {
   if (!process.env.REACT_APP_SENTRY_DSN) {
-    console.log('Sentry DSN not configured, skipping initialization');
+    // Sentry DSN not configured - skip initialization in development
     return;
   }
 
@@ -21,8 +21,6 @@ export function initSentry() {
       Sentry.replayIntegration(),
     ],
   });
-
-  console.log('Sentry initialized for', process.env.NODE_ENV || 'development');
 }
 
 /**

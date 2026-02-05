@@ -3,11 +3,11 @@ import { render, screen, waitFor } from './test-utils';
 import axios from 'axios';
 import Students from '../features/students/components/StudentList';
 
-// Mock axios
-jest.mock('axios');
-
 // Get access to the mocked auth service
 import authService from '../utils/auth';
+
+// Mock axios
+jest.mock('axios');
 
 const mockStudents = [
   {
@@ -35,7 +35,7 @@ const mockStudents = [
 ];
 
 // Helper to create paginated response matching API format
-const createPaginatedResponse = (students) => ({
+const createPaginatedResponse = students => ({
   data: {
     data: students,
     pagination: {

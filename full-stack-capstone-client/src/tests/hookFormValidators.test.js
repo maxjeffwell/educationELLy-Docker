@@ -1,4 +1,7 @@
-import { validationRules, combineRules } from '../validators/hookFormValidators';
+import {
+  validationRules,
+  combineRules,
+} from '../validators/hookFormValidators';
 
 describe('hookFormValidators', () => {
   describe('validationRules.required', () => {
@@ -44,7 +47,9 @@ describe('hookFormValidators', () => {
     });
 
     it('should have pattern error message', () => {
-      expect(validationRules.email.pattern.message).toBe('Invalid email address');
+      expect(validationRules.email.pattern.message).toBe(
+        'Invalid email address'
+      );
     });
 
     it('should pass validate for non-empty email', () => {
@@ -93,9 +98,13 @@ describe('hookFormValidators', () => {
       const rules = validationRules.password(10, 50);
 
       expect(rules.minLength.value).toBe(10);
-      expect(rules.minLength.message).toBe('Your password must be at least 10 characters long');
+      expect(rules.minLength.message).toBe(
+        'Your password must be at least 10 characters long'
+      );
       expect(rules.maxLength.value).toBe(50);
-      expect(rules.maxLength.message).toBe('Your password can be at most 50 characters long');
+      expect(rules.maxLength.message).toBe(
+        'Your password can be at most 50 characters long'
+      );
     });
 
     it('should pass validate for trimmed password', () => {
@@ -113,26 +122,37 @@ describe('hookFormValidators', () => {
 
   describe('validationRules.passwordConfirmation', () => {
     it('should have required message', () => {
-      expect(validationRules.passwordConfirmation.required).toBe('Please confirm your password');
+      expect(validationRules.passwordConfirmation.required).toBe(
+        'Please confirm your password'
+      );
     });
 
     it('should fail if value is empty', () => {
-      const result = validationRules.passwordConfirmation.validate('', { password: 'test123' });
+      const result = validationRules.passwordConfirmation.validate('', {
+        password: 'test123',
+      });
       expect(result).toBe('Please confirm your password');
     });
 
     it('should fail if value is whitespace only', () => {
-      const result = validationRules.passwordConfirmation.validate('   ', { password: 'test123' });
+      const result = validationRules.passwordConfirmation.validate('   ', {
+        password: 'test123',
+      });
       expect(result).toBe('This field cannot be empty');
     });
 
     it('should fail if passwords do not match', () => {
-      const result = validationRules.passwordConfirmation.validate('different', { password: 'test123' });
+      const result = validationRules.passwordConfirmation.validate(
+        'different',
+        { password: 'test123' }
+      );
       expect(result).toBe('The passwords do not match');
     });
 
     it('should pass if passwords match', () => {
-      const result = validationRules.passwordConfirmation.validate('test123', { password: 'test123' });
+      const result = validationRules.passwordConfirmation.validate('test123', {
+        password: 'test123',
+      });
       expect(result).toBe(true);
     });
   });

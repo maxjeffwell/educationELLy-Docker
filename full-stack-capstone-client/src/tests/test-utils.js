@@ -1,5 +1,5 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import { render, waitFor } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
@@ -20,6 +20,37 @@ const theme = {
   white: '#f5f5f5',
 };
 
+// Create default initial state to prevent undefined errors
+const defaultInitialState = {
+  auth: {
+    authenticated: false,
+    user: null,
+    errorMessage: '',
+    loading: false,
+  },
+  students: {
+    ids: [],
+    entities: {},
+    loading: false,
+    error: null,
+    selectedStudent: null,
+    pagination: {
+      page: 1,
+      limit: 25,
+      total: 0,
+      totalPages: 0,
+      hasNext: false,
+      hasPrev: false,
+    },
+  },
+  isSidebarToggled: false,
+  signup: {
+    loading: false,
+    errorMessage: '',
+  },
+  modals: null,
+};
+
 // Create a custom render function that includes all providers
 export function renderWithProviders(
   ui,
@@ -34,7 +65,10 @@ export function renderWithProviders(
         signup: signupReducer,
         modals: modalReducer,
       },
-      preloadedState,
+      preloadedState: {
+        ...defaultInitialState,
+        ...preloadedState,
+      },
     }),
     ...renderOptions
   } = {}
@@ -51,6 +85,14 @@ export function renderWithProviders(
 
   // Return an object with the store and all of RTL's query functions
   return { store, ...render(ui, { wrapper: Wrapper, ...renderOptions }) };
+}
+
+/**
+ * Helper to wait for all pending async operations to complete.
+ * Useful for preventing act() warnings when tests finish before async operations.
+ */
+export async function waitForAsync() {
+  await waitFor(() => {}, { timeout: 100 });
 }
 
 // Re-export everything

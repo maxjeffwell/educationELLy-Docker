@@ -50,17 +50,23 @@ describe('validators (legacy)', () => {
 
     it('should return error when below min length', () => {
       const validator = length({ min: 5 });
-      expect(validator('hi')).toBe('Your password must be at least 5 characters long');
+      expect(validator('hi')).toBe(
+        'Your password must be at least 5 characters long'
+      );
     });
 
     it('should return error when above max length', () => {
       const validator = length({ max: 5 });
-      expect(validator('toolongpassword')).toBe('Your password can be at most 5 characters long');
+      expect(validator('toolongpassword')).toBe(
+        'Your password can be at most 5 characters long'
+      );
     });
 
     it('should handle only min constraint', () => {
       const validator = length({ min: 3 });
-      expect(validator('ab')).toBe('Your password must be at least 3 characters long');
+      expect(validator('ab')).toBe(
+        'Your password must be at least 3 characters long'
+      );
       expect(validator('abc')).toBeUndefined();
       expect(validator('verylongstring')).toBeUndefined();
     });
@@ -69,7 +75,9 @@ describe('validators (legacy)', () => {
       const validator = length({ max: 5 });
       expect(validator('hi')).toBeUndefined();
       expect(validator('hello')).toBeUndefined();
-      expect(validator('toolong')).toBe('Your password can be at most 5 characters long');
+      expect(validator('toolong')).toBe(
+        'Your password can be at most 5 characters long'
+      );
     });
   });
 
@@ -92,14 +100,18 @@ describe('validators (legacy)', () => {
       const validator = matches('password');
       const allValues = { password: 'secret123' };
 
-      expect(validator('different', allValues)).toBe('The passwords do not match');
+      expect(validator('different', allValues)).toBe(
+        'The passwords do not match'
+      );
     });
 
     it('should return error when target field does not exist', () => {
       const validator = matches('password');
       const allValues = { email: 'test@example.com' };
 
-      expect(validator('anything', allValues)).toBe('The passwords do not match');
+      expect(validator('anything', allValues)).toBe(
+        'The passwords do not match'
+      );
     });
   });
 });

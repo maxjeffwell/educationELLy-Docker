@@ -52,10 +52,16 @@ describe('<Signin />', () => {
     await user.click(submitButton);
 
     // Check for validation - may appear as required field warnings
-    await waitFor(() => {
-      // Look for any validation message
-      expect(screen.queryByText(/required/i) || screen.queryByText(/invalid/i)).toBeTruthy();
-    }, { timeout: 2000 });
+    await waitFor(
+      () => {
+        // Look for any validation message (using queryBy for OR condition)
+        // eslint-disable-next-line testing-library/prefer-presence-queries
+        const validationMessage =
+          screen.queryByText(/required/i) || screen.queryByText(/invalid/i);
+        expect(validationMessage).toBeTruthy();
+      },
+      { timeout: 2000 }
+    );
   });
 
   it('Should enable submit button only when form is dirty', async () => {

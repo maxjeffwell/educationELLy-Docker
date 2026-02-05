@@ -12,7 +12,7 @@ jest.mock('@sentry/react', () => ({
   replayIntegration: jest.fn(() => ({})),
   captureException: jest.fn(),
   setUser: jest.fn(),
-  withScope: jest.fn((cb) => cb({ setExtra: jest.fn() })),
+  withScope: jest.fn(cb => cb({ setExtra: jest.fn() })),
 }));
 
 // Mock the local sentry utils
@@ -68,20 +68,51 @@ global.IntersectionObserver = class IntersectionObserver {
   unobserve() {}
 };
 
-// Suppress console errors during tests (optional)
+// Suppress known console warnings during tests
 const originalError = console.error;
+const originalWarn = console.warn;
+
 beforeAll(() => {
+  // Suppress known non-critical warnings
   console.error = (...args) => {
-    if (
-      typeof args[0] === 'string' &&
-      args[0].includes('Warning: ReactDOM.render is no longer supported')
-    ) {
+    const message = typeof args[0] === 'string' ? args[0] : '';
+
+    // Suppress known warnings that don't affect test results
+    const suppressedPatterns = [
+      'Warning: ReactDOM.render is no longer supported',
+      'Warning: An update to',
+      'inside a test was not wrapped in act',
+      'Warning: findDOMNode is deprecated',
+      'Support for defaultProps will be removed',
+      'A suspended resource finished loading inside a test',
+      'Failed to fetch students:',
+    ];
+
+    if (suppressedPatterns.some(pattern => message.includes(pattern))) {
       return;
     }
     originalError.call(console, ...args);
+  };
+
+  console.warn = (...args) => {
+    const message = typeof args[0] === 'string' ? args[0] : '';
+
+    // Suppress React Router deprecation warnings in tests
+    const suppressedPatterns = ['React Router Future Flag Warning'];
+
+    if (suppressedPatterns.some(pattern => message.includes(pattern))) {
+      return;
+    }
+    originalWarn.call(console, ...args);
   };
 });
 
 afterAll(() => {
   console.error = originalError;
+  console.warn = originalWarn;
+});
+
+// Cleanup after each test to prevent memory leaks and act() warnings
+afterEach(() => {
+  jest.clearAllTimers();
 });

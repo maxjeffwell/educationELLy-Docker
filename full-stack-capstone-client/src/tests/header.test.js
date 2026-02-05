@@ -28,7 +28,12 @@ describe('<Header />', () => {
 
   it('Should show authenticated navigation links when user is logged in', () => {
     const authenticatedState = {
-      auth: { authenticated: true, user: { email: 'test@test.com' }, errorMessage: '', loading: false },
+      auth: {
+        authenticated: true,
+        user: { email: 'test@test.com' },
+        errorMessage: '',
+        loading: false,
+      },
     };
 
     render(<Header />, { preloadedState: authenticatedState });
@@ -55,7 +60,12 @@ describe('<Header />', () => {
 
   it('Should have clickable authenticated navigation buttons', () => {
     const authenticatedState = {
-      auth: { authenticated: true, user: { email: 'test@test.com' }, errorMessage: '', loading: false },
+      auth: {
+        authenticated: true,
+        user: { email: 'test@test.com' },
+        errorMessage: '',
+        loading: false,
+      },
     };
 
     render(<Header />, { preloadedState: authenticatedState });

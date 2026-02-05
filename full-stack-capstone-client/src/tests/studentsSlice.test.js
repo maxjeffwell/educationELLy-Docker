@@ -67,8 +67,8 @@ describe('studentsSlice', () => {
       const stateWithData = {
         ids: ['1', '2'],
         entities: {
-          '1': { id: '1', fullName: 'John' },
-          '2': { id: '2', fullName: 'Jane' },
+          1: { id: '1', fullName: 'John' },
+          2: { id: '2', fullName: 'Jane' },
         },
         loading: false,
         error: null,
@@ -88,9 +88,9 @@ describe('studentsSlice', () => {
       students: {
         ids: ['1', '2', '3'],
         entities: {
-          '1': { id: '1', fullName: 'Alice Smith', ellStatus: 'beginner' },
-          '2': { id: '2', fullName: 'Bob Jones', ellStatus: 'intermediate' },
-          '3': { id: '3', fullName: 'Carol White', ellStatus: 'advanced' },
+          1: { id: '1', fullName: 'Alice Smith', ellStatus: 'beginner' },
+          2: { id: '2', fullName: 'Bob Jones', ellStatus: 'intermediate' },
+          3: { id: '3', fullName: 'Carol White', ellStatus: 'advanced' },
         },
         loading: true,
         error: 'Test error',
