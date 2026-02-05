@@ -1,6 +1,6 @@
 import React from 'react';
 import { Controller } from 'react-hook-form';
-import { Form, Input, Label, Dropdown } from 'semantic-ui-react';
+import { Form, Input, Label } from 'semantic-ui-react';
 import styled from 'styled-components';
 
 // Valid enum values for student fields (must match server validation)
@@ -29,8 +29,8 @@ export const VALID_COMPOSITE_LEVELS = [
   { key: 'na', value: 'N/A', text: 'N/A' },
 ];
 
-// Styled wrapper for dropdown to match labeled inputs
-const DropdownWrapper = styled.div`
+// Styled wrapper for select to match labeled inputs
+const SelectWrapper = styled.div`
   display: flex;
   align-items: stretch;
 
@@ -39,38 +39,44 @@ const DropdownWrapper = styled.div`
     align-items: center;
     justify-content: center;
     width: 50px;
+    min-width: 50px;
     border: 2px solid #f2711c;
     border-radius: 5px;
     background: #e8e8e8;
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
+    border-right: none;
   }
 
-  .ui.dropdown.selection {
+  select {
     flex: 1;
-    font-family: 'Roboto', 'sans-serif';
+    font-family: 'Roboto', sans-serif;
     font-size: 2em;
     font-weight: 700;
     color: #2185d0;
+    background-color: white;
     border: 2px solid #21ba45;
     border-left: none;
     border-radius: 0;
-    border-top-right-radius: 0.28571429rem;
-    border-bottom-right-radius: 0.28571429rem;
-    min-height: auto;
-    padding: 0.5em 1em;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+    appearance: menulist;
+    -webkit-appearance: menulist;
+    -moz-appearance: menulist;
   }
 
-  .ui.dropdown.selection .text {
-    font-family: 'Roboto', 'sans-serif';
-    font-weight: 700;
-    color: #2185d0;
+  select:focus {
+    outline: none;
+    border-color: #21ba45;
   }
 
-  .ui.dropdown.selection .menu .item {
-    font-family: 'Roboto', 'sans-serif';
-    font-size: 0.6em;
+  select option {
+    font-family: 'Roboto', sans-serif;
+    font-size: 0.5em;
     font-weight: 600;
+    color: #2185d0;
   }
 `;
 
@@ -156,7 +162,7 @@ export const LabeledFormInput = ({
   );
 };
 
-// Dropdown/Select component for enum fields - styled to match LabeledFormInput
+// Select component using native HTML select - styled to match LabeledFormInput
 export const LabeledFormSelect = ({
   name,
   control,
@@ -173,21 +179,28 @@ export const LabeledFormSelect = ({
       rules={rules}
       defaultValue={defaultValue}
       render={({
-        field: { onChange, value, onBlur },
+        field: { onChange, value, onBlur, ref },
         fieldState: { error },
       }) => (
         <Form.Field error={!!error}>
-          <DropdownWrapper>
+          <SelectWrapper>
             <div className="icon-label">{label}</div>
-            <Dropdown
-              selection
-              placeholder={placeholder}
-              options={options}
-              value={value}
-              onChange={(e, { value: newValue }) => onChange(newValue)}
+            <select
+              ref={ref}
+              value={value || ''}
+              onChange={e => onChange(e.target.value)}
               onBlur={onBlur}
-            />
-          </DropdownWrapper>
+            >
+              <option value="" disabled>
+                {placeholder}
+              </option>
+              {options.map(opt => (
+                <option key={opt.key} value={opt.value}>
+                  {opt.text}
+                </option>
+              ))}
+            </select>
+          </SelectWrapper>
           {error && (
             <Label pointing prompt>
               {error.message}
