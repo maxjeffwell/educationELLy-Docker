@@ -370,7 +370,7 @@ const UpdateStudent = () => {
               content: <Icon color="green" name="student" size="large" />,
             }}
             labelPosition="left"
-            placeholder="enter full student name"
+            placeholder="Enter Full Student Name"
           />
 
           <LabeledFormInput
@@ -382,7 +382,7 @@ const UpdateStudent = () => {
               ),
             }}
             labelPosition="left"
-            placeholder="enter school"
+            placeholder="Enter School"
           />
 
           <LabeledFormInput
@@ -392,7 +392,7 @@ const UpdateStudent = () => {
               content: <Icon color="orange" name="apple" size="large" />,
             }}
             labelPosition="left"
-            placeholder="enter teacher"
+            placeholder="Enter Teacher"
           />
 
           <LabeledFormInput
@@ -402,14 +402,14 @@ const UpdateStudent = () => {
               content: <Icon color="green" name="chart line" size="large" />,
             }}
             labelPosition="left"
-            placeholder="enter grade level"
+            placeholder="Enter Grade Level"
           />
 
           <LabeledFormSelect
             name="ellStatus"
             control={control}
             label={<Icon color="orange" name="world" size="large" />}
-            placeholder="select ELL Status"
+            placeholder="Select ELL Status"
             options={VALID_ELL_STATUS}
           />
 
@@ -417,7 +417,7 @@ const UpdateStudent = () => {
             name="compositeLevel"
             control={control}
             label={<Icon color="green" name="percent" size="large" />}
-            placeholder="select composite level"
+            placeholder="Select Composite Level"
             options={VALID_COMPOSITE_LEVELS}
           />
 
@@ -425,7 +425,7 @@ const UpdateStudent = () => {
             name="designation"
             control={control}
             label={<Icon color="blue" name="universal access" size="large" />}
-            placeholder="select designation"
+            placeholder="Select Designation"
             options={VALID_DESIGNATIONS}
           />
 

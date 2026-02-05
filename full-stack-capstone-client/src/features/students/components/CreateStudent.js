@@ -183,7 +183,7 @@ const CreateStudent = () => {
                 content: <Icon color="blue" name="user outline" size="large" />,
               }}
               labelPosition="left"
-              placeholder="enter student full name"
+              placeholder="Enter Student Full Name"
             />
           </Form.Group>
           <Form.Group>
@@ -197,7 +197,7 @@ const CreateStudent = () => {
                 ),
               }}
               labelPosition="left"
-              placeholder="enter school"
+              placeholder="Enter School"
             />
           </Form.Group>
           <Form.Group>
@@ -211,7 +211,7 @@ const CreateStudent = () => {
                 ),
               }}
               labelPosition="left"
-              placeholder="enter teacher"
+              placeholder="Enter Teacher"
             />
           </Form.Group>
           <Form.Group>
@@ -225,7 +225,7 @@ const CreateStudent = () => {
                 ),
               }}
               labelPosition="left"
-              placeholder="enter grade level"
+              placeholder="Enter Grade Level"
             />
           </Form.Group>
           <Form.Group>
@@ -234,7 +234,7 @@ const CreateStudent = () => {
               name="ellStatus"
               rules={validationRules.nonEmpty}
               label={<Icon color="blue" name="world" size="large" />}
-              placeholder="select ELL Status"
+              placeholder="Select ELL Status"
               options={VALID_ELL_STATUS}
             />
           </Form.Group>
@@ -243,7 +243,7 @@ const CreateStudent = () => {
               control={control}
               name="compositeLevel"
               label={<Icon color="green" name="chart line" size="large" />}
-              placeholder="select composite level (optional)"
+              placeholder="Select Composite Level (Optional)"
               options={VALID_COMPOSITE_LEVELS}
             />
           </Form.Group>
@@ -252,7 +252,7 @@ const CreateStudent = () => {
               control={control}
               name="designation"
               label={<Icon color="purple" name="file alternate" size="large" />}
-              placeholder="select designation (optional)"
+              placeholder="Select Designation (Optional)"
               options={VALID_DESIGNATIONS}
             />
           </Form.Group>
