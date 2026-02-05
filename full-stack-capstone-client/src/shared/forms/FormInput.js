@@ -38,11 +38,10 @@ export const VALID_COMPOSITE_LEVELS = [
   { key: 'na', value: 'N/A', text: 'N/A' },
 ];
 
-// Styled wrapper for select to match labeled inputs
+// Styled wrapper for select to match labeled inputs exactly
 const SelectWrapper = styled.div`
   display: flex;
   align-items: stretch;
-  max-width: 330px;
 
   .icon-label {
     display: flex;
@@ -59,43 +58,34 @@ const SelectWrapper = styled.div`
   }
 
   select {
-    width: 280px;
-    max-width: calc(100% - 50px);
+    flex: 1;
     font-family: 'Roboto', sans-serif;
-    font-size: 1.2em;
-    font-weight: 400;
-    color: rgba(191, 191, 191, 1);
+    font-size: 2em;
+    font-weight: 700;
+    color: rgba(191, 191, 191, 0.87);
     background-color: #e8e8e8;
-    border: 2px solid #21ba45 !important;
-    border-left: none !important;
+    border-top: 2px solid #21ba45;
+    border-right: 2px solid #21ba45;
+    border-bottom: 2px solid #21ba45;
+    border-left: none;
     border-radius: 0;
     border-top-right-radius: 5px;
     border-bottom-right-radius: 5px;
-    padding: 10px;
+    padding: 5px 5px 5px 10px;
     cursor: pointer;
-    height: 48px;
     box-sizing: border-box;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-    background-repeat: no-repeat;
-    background-position: right 10px center;
-    background-size: 16px;
-    padding-right: 35px;
+    width: 272px;
+    min-width: 272px;
+    height: auto;
   }
 
   select.has-value {
     color: #2185d0;
     font-weight: 700;
-    font-size: 2em;
-    background-color: #e8e8e8;
-    padding: 5px 10px;
   }
 
   select:focus {
     outline: none;
-    border-color: #21ba45;
   }
 
   select option {
@@ -104,6 +94,20 @@ const SelectWrapper = styled.div`
     font-weight: 400;
     color: #333;
     background-color: white;
+  }
+
+  /* Mobile responsive - match text inputs */
+  @media (max-width: 768px) {
+    select {
+      font-size: 1.5em;
+    }
+  }
+
+  @media (max-width: 480px) {
+    select {
+      font-size: 1.2em;
+      padding: 8px;
+    }
   }
 `;
 
@@ -210,25 +214,27 @@ export const LabeledFormSelect = ({
         fieldState: { error },
       }) => (
         <Form.Field error={!!error}>
-          <SelectWrapper>
-            <div className="icon-label">{label}</div>
-            <select
-              ref={ref}
-              value={value || ''}
-              onChange={e => onChange(e.target.value)}
-              onBlur={onBlur}
-              className={value ? 'has-value' : ''}
-            >
-              <option value="" disabled>
-                {placeholder}
-              </option>
-              {options.map(opt => (
-                <option key={opt.key} value={opt.value}>
-                  {opt.text}
+          <div className="ui left labeled input">
+            <SelectWrapper>
+              <div className="icon-label">{label}</div>
+              <select
+                ref={ref}
+                value={value || ''}
+                onChange={e => onChange(e.target.value)}
+                onBlur={onBlur}
+                className={value ? 'has-value' : ''}
+              >
+                <option value="" disabled>
+                  {placeholder}
                 </option>
-              ))}
-            </select>
-          </SelectWrapper>
+                {options.map(opt => (
+                  <option key={opt.key} value={opt.value}>
+                    {opt.text}
+                  </option>
+                ))}
+              </select>
+            </SelectWrapper>
+          </div>
           {error && (
             <Label pointing prompt>
               {error.message}
