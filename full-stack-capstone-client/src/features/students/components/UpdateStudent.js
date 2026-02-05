@@ -61,6 +61,54 @@ export const StyledForm = styled(Form)`
     font-weight: bold;
     border: none;
   }
+
+  /* Select dropdown styling - match text inputs exactly */
+  &&& select {
+    font-family: 'Roboto', 'sans-serif';
+    font-size: 2em;
+    font-weight: 700;
+    color: rgba(191, 191, 191, 0.87);
+    padding: 5px 5px 5px 10px;
+    background-color: ${props => props.theme.white};
+    border-top: 2px solid ${props => props.theme.green};
+    border-right: 2px solid ${props => props.theme.green};
+    border-bottom: 2px solid ${props => props.theme.green};
+    border-left: none;
+    border-radius: 0;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    margin-right: auto;
+    cursor: pointer;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+  }
+
+  &&& select.has-value {
+    color: ${props => props.theme.blue};
+  }
+
+  /* Select icon label - match input labels */
+  &&& .icon-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    min-width: 50px;
+    border: 2px solid ${props => props.theme.orange};
+    border-radius: 5px;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-right: none;
+    background: ${props => props.theme.white};
+  }
+
+  /* Error label positioning for selects */
+  &&& .ui.pointing.prompt.label {
+    display: block;
+    margin-top: 0.5em;
+    margin-left: 50px;
+  }
 `;
 
 const UpdateStudent = () => {
