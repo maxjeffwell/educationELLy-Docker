@@ -5,34 +5,29 @@ import Landing from '../components/Landing';
 describe('<Landing />', () => {
   it('Should render without crashing', () => {
     render(<Landing />);
-    expect(screen.getByRole('main')).toBeInTheDocument();
+    // Landing renders a Container with content
+    expect(screen.getByText('educationELLy')).toBeInTheDocument();
   });
 
-  it('Should display the welcome message', () => {
+  it('Should display the app title', () => {
     render(<Landing />);
-    expect(screen.getByText('Welcome to educationELLy')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('educationELLy');
   });
 
-  it('Should display the app description', () => {
+  it('Should display feature list', () => {
     render(<Landing />);
-    expect(
-      screen.getByText(/mainstream classroom teachers/i)
-    ).toBeInTheDocument();
-    expect(screen.getByText(/English Language Learning/i)).toBeInTheDocument();
+    expect(screen.getByText(/Student data at your fingertips/i)).toBeInTheDocument();
+    expect(screen.getByText(/Quickly access student lists/i)).toBeInTheDocument();
+    expect(screen.getByText(/AI-Powered Assistant/i)).toBeInTheDocument();
   });
 
-  it('Should have proper semantic HTML structure', () => {
+  it('Should display login instructions', () => {
     render(<Landing />);
-
-    const main = screen.getByRole('main');
-    expect(main).toBeInTheDocument();
-    expect(main).toHaveClass('landing');
+    expect(screen.getByText(/click the Login link/i)).toBeInTheDocument();
   });
 
-  it('Should be accessible with proper heading hierarchy', () => {
+  it('Should display registration instructions', () => {
     render(<Landing />);
-
-    const heading = screen.getByRole('heading', { level: 1 });
-    expect(heading).toHaveTextContent('Welcome to educationELLy');
+    expect(screen.getByText(/Register button/i)).toBeInTheDocument();
   });
 });

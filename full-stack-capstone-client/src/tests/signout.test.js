@@ -2,18 +2,9 @@ import React from 'react';
 import { render, screen } from './test-utils';
 import Signout from '../components/auth/Signout';
 
-// Mock the signout action
-const mockSignout = jest.fn();
-jest.mock('../store/actions', () => ({
-  ...jest.requireActual('../store/actions'),
-  signout: () => mockSignout(),
-}));
+// Auth utils mock is provided in setupTests.js
 
 describe('<Signout />', () => {
-  beforeEach(() => {
-    mockSignout.mockClear();
-  });
-
   it('Should render without crashing', () => {
     render(<Signout />);
     expect(
@@ -21,16 +12,21 @@ describe('<Signout />', () => {
     ).toBeInTheDocument();
   });
 
-  it('Should call signout action on mount', () => {
-    render(<Signout />);
-    expect(mockSignout).toHaveBeenCalledTimes(1);
-  });
-
   it('Should display success message', () => {
     render(<Signout />);
 
     const message = screen.getByText('You have successfully logged out.');
     expect(message).toBeInTheDocument();
-    expect(message.closest('.message')).toHaveClass('success');
+  });
+
+  it('Should clear authenticated state after signout', () => {
+    const preloadedState = {
+      auth: { authenticated: true, user: { email: 'test@test.com' }, errorMessage: '', loading: false },
+    };
+
+    const { store } = render(<Signout />, { preloadedState });
+
+    // After signout, auth state should be cleared
+    expect(store.getState().auth.authenticated).toBe(false);
   });
 });

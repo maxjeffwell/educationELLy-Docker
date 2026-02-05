@@ -4,6 +4,46 @@
 // learn more: https://github.com/testing-library/jest-dom
 import '@testing-library/jest-dom';
 
+// Mock Sentry to prevent errors in test environment
+jest.mock('@sentry/react', () => ({
+  init: jest.fn(),
+  ErrorBoundary: ({ children }) => children,
+  browserTracingIntegration: jest.fn(() => ({})),
+  replayIntegration: jest.fn(() => ({})),
+  captureException: jest.fn(),
+  setUser: jest.fn(),
+  withScope: jest.fn((cb) => cb({ setExtra: jest.fn() })),
+}));
+
+// Mock the local sentry utils
+jest.mock('./utils/sentry', () => ({
+  initSentry: jest.fn(),
+  SentryErrorBoundary: ({ children }) => children,
+  captureException: jest.fn(),
+  setUser: jest.fn(),
+}));
+
+// Mock auth utils by default (can be overridden in specific tests)
+jest.mock('./utils/auth', () => ({
+  __esModule: true,
+  default: {
+    isAuthenticated: jest.fn(() => false),
+    getToken: jest.fn(() => null),
+    clearTokens: jest.fn(),
+    handleAuthSuccess: jest.fn(),
+    handleAuthFailure: jest.fn(),
+    checkAuthStatus: jest.fn().mockResolvedValue({ authenticated: false }),
+    signout: jest.fn().mockResolvedValue({}),
+    signoutAll: jest.fn().mockResolvedValue({}),
+  },
+}));
+
+// Mock react-helmet-async to avoid SSR issues in tests
+jest.mock('react-helmet-async', () => ({
+  Helmet: ({ children }) => children,
+  HelmetProvider: ({ children }) => children,
+}));
+
 // Mock window.matchMedia which is not implemented in JSDOM
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
