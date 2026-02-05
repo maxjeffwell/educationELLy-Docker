@@ -22,13 +22,15 @@ class AuthService {
       async error => {
         const originalRequest = error.config;
 
-        // Don't retry refresh endpoint itself to avoid infinite loop
-        const isRefreshRequest = originalRequest.url?.includes('/refresh');
+        // Don't retry these endpoints - they check auth status, not access protected resources
+        const isAuthCheckEndpoint =
+          originalRequest.url?.includes('/refresh') ||
+          originalRequest.url?.includes('/whoami');
 
-        // If 401, not a refresh request, and haven't already retried, attempt token refresh
+        // If 401, not an auth check endpoint, and haven't already retried, attempt token refresh
         if (
           error.response?.status === 401 &&
-          !isRefreshRequest &&
+          !isAuthCheckEndpoint &&
           !originalRequest._retry
         ) {
           originalRequest._retry = true;
@@ -147,6 +149,13 @@ class AuthService {
   migrateLegacyAuth() {
     // Clear any old tokens - the server will handle auth via cookies now
     this.clearLegacyTokens();
+  }
+
+  /**
+   * Alias for migrateLegacyAuth (for backward compatibility)
+   */
+  migrateTokens() {
+    this.migrateLegacyAuth();
   }
 
   // Deprecated methods - kept for backward compatibility
