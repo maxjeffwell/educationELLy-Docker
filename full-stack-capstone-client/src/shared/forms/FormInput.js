@@ -59,29 +59,33 @@ const SelectWrapper = styled.div`
 
   select {
     flex: 1;
-    font-family: 'Roboto', sans-serif;
-    font-size: 2em;
-    font-weight: 700;
-    color: rgba(191, 191, 191, 0.87);
-    background-color: #e8e8e8;
-    border-top: 2px solid #21ba45;
-    border-right: 2px solid #21ba45;
-    border-bottom: 2px solid #21ba45;
-    border-left: none;
-    border-radius: 0;
-    border-top-right-radius: 5px;
-    border-bottom-right-radius: 5px;
-    padding: 5px 5px 5px 10px;
+    font-family: 'Roboto', sans-serif !important;
+    font-size: 2em !important;
+    font-weight: 700 !important;
+    color: rgba(191, 191, 191, 0.87) !important;
+    background-color: #e8e8e8 !important;
+    border-top: 2px solid #21ba45 !important;
+    border-right: 2px solid #21ba45 !important;
+    border-bottom: 2px solid #21ba45 !important;
+    border-left: none !important;
+    border-radius: 0 !important;
+    border-top-right-radius: 5px !important;
+    border-bottom-right-radius: 5px !important;
+    padding: 5px 5px 5px 10px !important;
     cursor: pointer;
     box-sizing: border-box;
-    width: 272px;
-    min-width: 272px;
+    width: 322px !important;
+    min-width: 322px !important;
+    max-width: 322px !important;
     height: auto;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
   }
 
   select.has-value {
-    color: #2185d0;
-    font-weight: 700;
+    color: #2185d0 !important;
+    font-weight: 700 !important;
   }
 
   select:focus {
@@ -108,6 +112,26 @@ const SelectWrapper = styled.div`
       font-size: 1.2em;
       padding: 8px;
     }
+  }
+`;
+
+// Wrapper to properly position error labels below the select field
+const SelectFieldWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  .ui.left.labeled.input {
+    width: 100%;
+  }
+
+  /* Error label styling - position below the field */
+  .ui.label.pointing.prompt {
+    display: block !important;
+    margin-top: 8px !important;
+    margin-left: 50px !important;
+    width: auto !important;
+    text-align: left !important;
   }
 `;
 
@@ -214,32 +238,34 @@ export const LabeledFormSelect = ({
         fieldState: { error },
       }) => (
         <Form.Field error={!!error}>
-          <div className="ui left labeled input">
-            <SelectWrapper>
-              <div className="icon-label">{label}</div>
-              <select
-                ref={ref}
-                value={value || ''}
-                onChange={e => onChange(e.target.value)}
-                onBlur={onBlur}
-                className={value ? 'has-value' : ''}
-              >
-                <option value="" disabled>
-                  {placeholder}
-                </option>
-                {options.map(opt => (
-                  <option key={opt.key} value={opt.value}>
-                    {opt.text}
+          <SelectFieldWrapper>
+            <div className="ui left labeled input">
+              <SelectWrapper>
+                <div className="icon-label">{label}</div>
+                <select
+                  ref={ref}
+                  value={value || ''}
+                  onChange={e => onChange(e.target.value)}
+                  onBlur={onBlur}
+                  className={value ? 'has-value' : ''}
+                >
+                  <option value="" disabled>
+                    {placeholder}
                   </option>
-                ))}
-              </select>
-            </SelectWrapper>
-          </div>
-          {error && (
-            <Label pointing prompt>
-              {error.message}
-            </Label>
-          )}
+                  {options.map(opt => (
+                    <option key={opt.key} value={opt.value}>
+                      {opt.text}
+                    </option>
+                  ))}
+                </select>
+              </SelectWrapper>
+            </div>
+            {error && (
+              <Label pointing prompt>
+                {error.message}
+              </Label>
+            )}
+          </SelectFieldWrapper>
         </Form.Field>
       )}
     />
