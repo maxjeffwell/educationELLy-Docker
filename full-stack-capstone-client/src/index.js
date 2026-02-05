@@ -31,6 +31,9 @@ import 'semantic-ui-css/components/input.css';
 import 'semantic-ui-css/components/sidebar.css';
 import 'semantic-ui-css/components/dimmer.css';
 import 'semantic-ui-css/components/loader.css';
+import 'semantic-ui-css/components/dropdown.css';
+import 'semantic-ui-css/components/label.css';
+import 'semantic-ui-css/components/transition.css';
 
 import { store } from './store';
 import App from './components/App';
