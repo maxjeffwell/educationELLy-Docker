@@ -140,21 +140,18 @@ export const LabeledFormSelect = ({
         fieldState: { error },
       }) => (
         <Form.Field error={!!error}>
-          <Input
-            label={label}
-            labelPosition="left"
-            input={
-              <Dropdown
-                selection
-                placeholder={placeholder}
-                options={options}
-                value={value || ''}
-                onChange={(e, data) => onChange(data.value)}
-                onBlur={onBlur}
-                fluid
-              />
-            }
-          />
+          <div className="ui left labeled input">
+            <Label>{label}</Label>
+            <Dropdown
+              selection
+              placeholder={placeholder}
+              options={options}
+              value={value || ''}
+              onChange={(e, data) => onChange(data.value)}
+              onBlur={onBlur}
+              className="labeled-dropdown"
+            />
+          </div>
           {error && (
             <Label pointing prompt>
               {error.message}

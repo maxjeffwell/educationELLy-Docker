@@ -62,12 +62,12 @@ export const StyledForm = styled(Form)`
     border: none;
   }
 
-  /* Select dropdown styling - match text inputs exactly */
-  &&& select {
+  /* Semantic UI Dropdown styling - match text inputs exactly */
+  &&& .ui.selection.dropdown {
     font-family: 'Roboto', 'sans-serif' !important;
     font-size: 2em !important;
     font-weight: 700 !important;
-    color: rgba(191, 191, 191, 0.87) !important;
+    min-height: auto !important;
     padding: 5px 5px 5px 10px !important;
     background-color: ${props => props.theme.white} !important;
     border-top: 2px solid ${props => props.theme.green} !important;
@@ -77,38 +77,33 @@ export const StyledForm = styled(Form)`
     border-radius: 0 !important;
     border-top-right-radius: 5px !important;
     border-bottom-right-radius: 5px !important;
-    margin-right: auto;
-    cursor: pointer;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
+    line-height: 1.2em !important;
   }
 
-  &&& select.has-value {
+  &&& .ui.selection.dropdown .default.text {
+    color: rgba(191, 191, 191, 0.87) !important;
+  }
+
+  &&& .ui.selection.dropdown .text {
     color: ${props => props.theme.blue} !important;
   }
 
-  /* Override error state background for selects */
-  &&& .field.error select {
+  &&& .ui.selection.dropdown .menu {
+    font-size: 0.5em !important;
+  }
+
+  &&& .ui.selection.dropdown .menu > .item {
+    font-size: 1em !important;
+    padding: 0.5em 1em !important;
+  }
+
+  /* Override error state background for dropdowns */
+  &&& .field.error .ui.selection.dropdown {
     background-color: ${props => props.theme.white} !important;
+    border-color: ${props => props.theme.green} !important;
   }
 
-  /* Select icon label - match input labels */
-  &&& .icon-label {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 50px;
-    min-width: 50px;
-    border: 2px solid ${props => props.theme.orange} !important;
-    border-radius: 5px;
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-    border-right: none;
-    background: ${props => props.theme.white} !important;
-  }
-
-  /* Error label positioning for selects */
+  /* Error label positioning */
   &&& .ui.pointing.prompt.label {
     display: block !important;
     margin-top: 0.5em !important;
