@@ -13,9 +13,17 @@ export const VALID_DESIGNATIONS = [
 
 export const VALID_COMPOSITE_LEVELS = [
   { key: 'beginning', value: 'Beginning', text: 'Beginning' },
-  { key: 'early-intermediate', value: 'Early Intermediate', text: 'Early Intermediate' },
+  {
+    key: 'early-intermediate',
+    value: 'Early Intermediate',
+    text: 'Early Intermediate',
+  },
   { key: 'intermediate', value: 'Intermediate', text: 'Intermediate' },
-  { key: 'early-advanced', value: 'Early Advanced', text: 'Early Advanced' },
+  {
+    key: 'early-advanced',
+    value: 'Early Advanced',
+    text: 'Early Advanced',
+  },
   { key: 'advanced', value: 'Advanced', text: 'Advanced' },
   { key: 'na', value: 'N/A', text: 'N/A' },
 ];
@@ -119,7 +127,10 @@ export const LabeledFormSelect = ({
       control={control}
       rules={rules}
       defaultValue={defaultValue}
-      render={({ field: { onChange, value, ...field }, fieldState: { error } }) => (
+      render={({
+        field: { onChange, value, ...field },
+        fieldState: { error },
+      }) => (
         <Form.Field error={!!error}>
           <div style={{ display: 'flex', alignItems: 'center' }}>
             {label}
