@@ -243,17 +243,20 @@ REACT_APP_API_URL=https://yourdomain.com/api
 - 👤 Non-root Docker containers
 - 📝 Security headers (HSTS, X-Frame-Options, etc.)
 
-## Deployment Options
+## Deployment
 
-### 1. Docker Compose (Recommended for getting started)
-- Single VPS deployment
-- DigitalOcean Droplet, AWS EC2, etc.
+### Production (Kubernetes)
+
+The application runs on a self-hosted **K3s cluster** managed via ArgoCD GitOps:
+
+- **Live:** [educationelly.el-jefe.me](https://educationelly.el-jefe.me)
+- **Ingress:** Traefik with automatic TLS via cert-manager + Let's Encrypt
+- **Secrets:** Doppler + External Secrets Operator
+- **CI/CD:** GitHub Actions → Docker Hub → ArgoCD auto-sync
+- **Helm:** Deployed via shared `portfolio-common` library chart
+
+### Docker Compose (Local Development)
 - See [DOCKER.md](./DOCKER.md)
-
-### 2. Kubernetes (Recommended for production scale)
-- DigitalOcean Kubernetes (DOKS)
-- AWS EKS, Google GKE, Azure AKS
-- See `KUBERNETES.md` (coming soon)
 
 ## Contributing
 
@@ -310,10 +313,10 @@ This project is licensed under the GNU General Public License v3.0 - see the [LI
 - [x] Nginx reverse proxy
 - [x] CI/CD pipeline (GitHub Actions)
 - [x] Automated Docker builds and security scanning
-- [ ] Kubernetes deployment manifests
-- [ ] Horizontal pod autoscaling
-- [ ] Automated SSL certificate management (cert-manager)
-- [ ] Monitoring and logging (Prometheus/Grafana)
+- [x] Kubernetes deployment (K3s + ArgoCD)
+- [x] Horizontal pod autoscaling
+- [x] Automated SSL certificate management (cert-manager)
+- [x] Monitoring and logging (Prometheus/Grafana)
 - [ ] End-to-end tests
 - [ ] Performance optimization
 - [ ] Mobile app (React Native)
