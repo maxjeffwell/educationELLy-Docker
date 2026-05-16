@@ -125,3 +125,6 @@ coverage/
 # Uncomment these if you want to ignore nested .git folders
 # full-stack-capstone-client/.git/
 # full-stack-capstone-server/.git/
+
+# Serena MCP server tool state (per-developer; not shared)
+.serena/
