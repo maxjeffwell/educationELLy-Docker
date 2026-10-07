@@ -1,3 +1,11 @@
+> **⚠ Obsolete (2026-10-07).** This guide used the legacy `k8s/` kustomize tree
+> (base + staging/production overlays, namespace `educationelly`), which has been
+> deleted — it was not deployed by anything (staging no longer even built).
+> educationELLy runs from devops-portfolio-manager `helm-charts/educationelly`
+> via ArgoCD app **`educationelly`**. The ClusterIssuers it defined now live in
+> devops-portfolio-manager `k8s/cert-manager/cluster-issuers.yaml`.
+> Kept for history only.
+
 # Kubernetes Deployment Guide
 
 This guide explains how to deploy educationELLy to Kubernetes, specifically optimized for DigitalOcean Kubernetes (DOKS).
