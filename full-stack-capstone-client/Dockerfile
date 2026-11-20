@@ -1,5 +1,5 @@
 # Build stage
-FROM node:20-alpine AS build
+FROM node:24-alpine AS build
 
 # Set working directory
 WORKDIR /app
@@ -22,7 +22,7 @@ ENV REACT_APP_API_URL=$REACT_APP_API_URL
 RUN npm run build
 
 # Development stage
-FROM node:20-alpine AS development
+FROM node:24-alpine AS development
 
 WORKDIR /app
 
@@ -43,7 +43,7 @@ EXPOSE 3000
 CMD ["npm", "run", "dev"]
 
 # Production stage
-FROM node:20-alpine AS production
+FROM node:24-alpine AS production
 
 WORKDIR /app
 

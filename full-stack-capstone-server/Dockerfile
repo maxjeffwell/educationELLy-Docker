@@ -1,5 +1,5 @@
 # Build stage
-FROM node:20-alpine AS base
+FROM node:24-alpine AS base
 
 # Set working directory
 WORKDIR /app
@@ -14,7 +14,7 @@ RUN --mount=type=cache,target=/root/.npm \
     apk del python3 make g++
 
 # Development stage
-FROM node:20-alpine AS development
+FROM node:24-alpine AS development
 
 WORKDIR /app
 
@@ -35,7 +35,7 @@ EXPOSE 8080
 CMD ["npm", "run", "dev"]
 
 # Production stage
-FROM node:20-alpine AS production
+FROM node:24-alpine AS production
 
 WORKDIR /app
 
